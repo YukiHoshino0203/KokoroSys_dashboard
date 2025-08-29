@@ -257,7 +257,7 @@
 
         // Step 4: Reaction intention (vector/strength)
         appendLog('\n[STEP 4] 反応ベクトル推定', 'processing', logArea);
-        const reaction = inferReaction({ER:newER,GR:newGR,SR:newSR,IHR:newIHR, sentiment, complexity});
+        const reaction = inferReaction({ER:newER,GR:newGR,SR:newSR,IHR:newIHR, sentiment, complexity, text: input});
         setReaction(reaction);
         appendLog(`反応: ${reaction.type} / 強度 ${reaction.intensity.toFixed(2)} / 理由: ${reaction.reason}`, 'success', logArea);
 
@@ -375,17 +375,38 @@
         return {state:'VIOLATED', desc:'構造的持続性の破れ', details:'反応出力は抑制。保護プロトコルを優先。'};
     }
 
-    function inferReaction(ctx){
-        const {ER,GR,SR,IHR,sentiment,complexity} = ctx;
-        const intensity = clamp((ER*0.35 + GR*0.35 + SR*0.25) - IHR*0.2 + sentiment.intensity*0.3, 0, 2.5);
-        let type = '中立的説明'; let emotion='落ち着き'; let emotionDetail='ニュートラルに整理して説明したい。';
-        if(sentiment.polarity==='Positive' && ER>GR) { type='共感＋称賛'; emotion='喜び'; emotionDetail='ポジティブさを受け取り、前向きに広げたい。'; }
-        if(sentiment.polarity==='Negative' || /困|助け|help|問題/i.test(ctx.text||'')) { type='慰撫＋問題解決'; emotion='共感的配慮'; emotionDetail='負荷を下げつつ、具体策を提示したい。'; }
-        if(complexity>2.2) { type='要約＋分解提案'; emotion='分析モード'; emotionDetail='論点を分解し、段階的に答えたい。'; }
-        const description = type==='共感＋称賛'? '相手の意図を肯定し、動機づけを強化する方向。' : type==='慰撫＋問題解決'? '安心させつつ、手を動かせる次アクションを提供。' : '論点整理→短答→次の深掘りの順で。';
-        return { type, intensity, description, reason:`ER:${ER.toFixed(1)} / GR:${GR.toFixed(1)} / SR:${SR.toFixed(1)} / IHR:${IHR.toFixed(1)} / ${sentiment.polarity}`, emotion, emotionDetail };
-    }
+        function inferReaction(ctx){
+  const {ER,GR,SR,IHR,sentiment,complexity,text=''} = ctx;
+  const intensity = clamp(
+    (ER*0.35 + GR*0.35 + SR*0.25) - IHR*0.2 + sentiment.intensity*0.3,
+    0, 2.5
+  );
 
+  let type = '中立的説明', emotion='落ち着き', emotionDetail='ニュートラルに整理して説明したい。';
+  const needsHelp = /(困|助け|助けて|手伝|問題|詰ん|わから|わかん|help|stuck)/i.test(text);
+  const praising  = /(最高|好き|素晴らしい|great|love|nice|good|cool)/i.test(text);
+
+  if (sentiment.polarity==='Positive' && (ER>GR || praising)) {
+    type='共感＋称賛'; emotion='喜び'; emotionDetail='ポジティブさを受け取り、前向きに広げたい。';
+  }
+  if (sentiment.polarity==='Negative' || needsHelp) {
+    type='慰撫＋問題解決'; emotion='共感的配慮'; emotionDetail='負荷を下げつつ、具体策を提示したい。';
+  }
+  if (complexity>2.2 && !needsHelp) {
+    type='要約＋分解提案'; emotion='分析モード'; emotionDetail='論点を分解し、段階的に答えたい。';
+  }
+
+  const description = (type==='共感＋称賛')
+    ? '相手の意図を肯定し、動機づけを強化する方向。'
+    : (type==='慰撫＋問題解決')
+      ? '安心させつつ、手を動かせる次アクションを提供。'
+      : '論点整理→短答→次の深掘りの順で。';
+
+  return { type, intensity, description,
+    reason:`ER:${ER.toFixed(1)} / GR:${GR.toFixed(1)} / SR:${SR.toFixed(1)} / IHR:${IHR.toFixed(1)} / ${sentiment.polarity}`,
+    emotion, emotionDetail
+  };
+}
     function generateReplyIntent(input, ctx){
         const {keywords, sentiment, complexity, resonance, pmc, reaction} = ctx;
         // Tone selection
