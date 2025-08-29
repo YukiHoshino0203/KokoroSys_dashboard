@@ -65,10 +65,10 @@
     <div class="dashboard">
         <!-- Header Section -->
         <div class="panel full-width header">
-            <h1>🧠💖 KokoroSystem EX v2.0</h1>
+            <h1 id="app-title">🧠💖 KokoroSystem EX v2.0</h1>
             <div class="version-info">自己実行型認知-感情アーキテクチャ | Complete Implementation | 2025年8月</div>
             <div class="real-implementation">
-                <h3>✨ KokoroSystem EX - 完全実装版</h3>
+                <h3 id="input-section-title">🔄 KokoroSystem 入力処理システム</h3>
                 <p><strong>機能:</strong> Trinity Resonance Model、Emotion Structure Theory、PMC、IHR-RDD統合実装</p>
                 <p><strong>特徴:</strong> リアルタイム入力処理、内部演算ログ、動的共鳴計算</p>
                 <p><strong>用途:</strong> 認知-感情アーキテクチャの研究、AI内部状態の可視化</p>
@@ -81,6 +81,13 @@
                 <div class="status-item"><h4>TR (総共鳴)</h4><div class="value pulse" id="tr-display">6.4</div><small id="tr-desc">標準活性状態</small></div>
             </div>
         </div>
+<!-- Language Toggle -->
+<div style="position:absolute; top:12px; right:16px;">
+  <select id="lang-switch" style="padding:6px 10px; border-radius:8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:#e0e6ed;">
+    <option value="ja">日本語</option>
+    <option value="en">English</option>
+  </select>
+</div>
 
         <!-- Interactive Input Section -->
         <div class="input-section">
@@ -119,7 +126,7 @@
 
         <!-- NEW: Natural Language Reply Intent -->
         <div class="panel full-width">
-            <h3>🗣️ 返答意図（自然言語）</h3>
+            <h3 id="reply-panel-title">🗣️ 返答意図（自然言語）</h3>
             <div class="reply-box">
                 <div class="reply-header">
                     <div><strong id="reply-tone">Tone: Neutral</strong> <span class="pill" id="reply-purpose">Purpose: 情報提供</span></div>
@@ -188,6 +195,70 @@
     </div>
 
     <script>
+// ===== i18n (inline dictionaries) =====
+let currentLocale = (localStorage.getItem('locale')) || (navigator.language && navigator.language.startsWith('ja') ? 'ja' : 'en');
+
+const LOCALES = {
+  ja: {
+    title: '🧠💖 KokoroSystem EX v2.0',
+    subtitle: '自己実行型認知-感情アーキテクチャ | 完全実装 | 2025年8月',
+    inputTitle: '🔄 KokoroSystem 入力処理システム',
+    process: '🧠 KokoroSystem で処理実行',
+    replyPanel: '🗣️ 返答意図（自然言語）',
+    purpose: { inform:'情報提供', solve:'問題解決', insight:'洞察共有', summarize:'要約整理' },
+    leads: { inform:['結論から簡潔に：','必要な情報だけ：','手短に：'], solve:['まず要点だけ端的に：','すぐ動ける形でまとめます：','最短ルートでいきます：'], insight:['核心を先に言うね：','骨格だけ先に押さえると：','結論から：'], summarize:['要点は3つ：','大枠を先に：','短くまとめると：'] },
+    bodies: { inform:['必要最小限→具体例→補助資料の順で出します。','まず結論、その後に補足と例を。'], solve:['①現状→②仮説→③手順→④検証で進めます。','現状/制約→対策案→試行順の順で書きます。'], insight:['前提を軽く整え、立場が変わっても崩れない骨格にして共有します。','用語の粒度を合わせてから、視点と含意を提示します。'], summarize:['余分をそぎ落として判断に必要なところだけ残します。','混ざった論点を分離して短文に落とします。'] },
+    closes: ['次に一つだけ決めて進めよう。','ここから何を一つ試す？','続けるなら、いちばん楽な一手から行こう。'],
+    topic: 'テーマ', keywords: 'キーワード',
+    safety: ' ※安全のため控えめに回答します。',
+    tones: { neutral:'中立', warm:'温かい', supportive:'寄り添い', cautious:'慎重 / セーフティ優先', gentle:'やさしく控えめ' },
+    reactionNotes: { soothe:'不安を下げつつ具体策を置きます。', praise:'意図を肯定し、少し増幅します。', align:'先に定義を合わせます。' }
+  },
+  en: {
+    title: '🧠💖 KokoroSystem EX v2.0',
+    subtitle: 'Self-Executing Cognition–Emotion Architecture | Complete Implementation | Aug 2025',
+    inputTitle: '🔄 KokoroSystem Input Processor',
+    process: '🧠 Run with KokoroSystem',
+    replyPanel: '🗣️ Reply Intent (Natural Language)',
+    purpose: { inform:'Inform', solve:'Problem-solving', insight:'Insight', summarize:'Summarize' },
+    leads: { inform:['Briefly:','Just the essentials:','In short:'], solve:['First, the essentials:','Here is a quick path:','Let’s go straight to it:'], insight:['Here is the core:','In essence:','Bottom line:'], summarize:['Three key points:','High level:','In short:'] },
+    bodies: { inform:['Answer → example → pointers.','Conclusion first, then details and example.'], solve:['We will go 1) context 2) hypothesis 3) steps 4) checks.','Context/constraints → plan → ordered steps.'], insight:['Align on terms, then share a viewpoint and implications.','State assumptions, then give a robust framing.'], summarize:['Trim to decisions-only information.','Separate mixed points and condense.'] },
+    closes: ['Pick one next step and move.','What’s the first small step?','Let’s start with the easiest action.'],
+    topic: 'Topic', keywords: 'keywords',
+    safety: ' *Answer toned down for safety.*',
+    tones: { neutral:'Neutral', warm:'Warm', supportive:'Supportive', cautious:'Cautious / Safety-first', gentle:'Gentle / Low-arousal' },
+    reactionNotes: { soothe:'We will reduce friction and give clear steps.', praise:'Acknowledge and amplify your intent.', align:'Let’s align terms first.' }
+  }
+};
+
+function t(path, fallback){
+  const obj = LOCALES[currentLocale] || LOCALES.ja;
+  const val = path.split('.').reduce((o,k)=> (o&&o[k]!=null)?o[k]:undefined, obj);
+  return val==null ? (fallback ?? path) : val;
+}
+function setLocale(loc){ currentLocale = loc; localStorage.setItem('locale', loc); applyI18n(); }
+function pick(arr){ return arr[Math.floor((Math.random()*997)%arr.length)]; }
+function applyI18n(){
+  const appTitle = document.getElementById('app-title'); if(appTitle) appTitle.textContent = t('title');
+  const vinfo = document.querySelector('.version-info'); if(vinfo) vinfo.textContent = t('subtitle');
+  const inputTitle = document.getElementById('input-section-title'); if(inputTitle) inputTitle.textContent = t('inputTitle');
+  const processBtn = document.getElementById('process-btn'); if(processBtn) processBtn.textContent = t('process');
+  const replyTitle = document.getElementById('reply-panel-title'); if(replyTitle) replyTitle.textContent = t('replyPanel');
+
+  // 既存の入力があれば、現在ロケールで草案を再生成
+  const input = document.getElementById('user-input').value.trim();
+  if(input){
+    const k = extractKeywords(input); const s = analyzeSentiment(input); const c = analyzeComplexity(input);
+    const pmc = {state: document.getElementById('pmc-title').textContent.includes('VIOLATED')?'VIOLATED':(document.getElementById('pmc-title').textContent.includes('AT-RISK')?'AT-RISK':'COHERENT')};
+    const reaction = inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c, text: input});
+    const rep = generateReplyIntentI18N(input,{keywords:k, sentiment:s, complexity:c, pmc, reaction});
+    renderReply(rep);
+  }
+
+  const sel = document.getElementById('lang-switch'); if(sel) sel.value = currentLocale;
+}
+
+        
     // ===== Global state =====
     let kokoroState = { ER: 2.1, GR: 1.8, SR: 2.5, IHR: 1.2, integrity: 0.75, layer: 'Mid', temporal: 'Present', vector: 'Balanced', pmcStatus: 'COHERENT', currentEmotion: 'Standby', processCount: 0 };
 
@@ -263,7 +334,7 @@
 
         // Step 5: *** Natural language reply intent ***
         appendLog('\n[STEP 5] 返答意図（自然言語）生成', 'processing', logArea);
-        const reply = generateReplyIntentV2(input, {keywords, sentiment, complexity, resonance:{ER:newER,GR:newGR,SR:newSR,IHR:newIHR,TR:newTR}, pmc, reaction});
+        const reply = generateReplyIntentI18N(input, {keywords, sentiment, complexity, resonance:{ER:newER,GR:newGR,SR:newSR,IHR:newIHR,TR:newTR}, pmc, reaction});
         renderReply(reply);
         appendLog('返答草案を生成しました。', 'success', logArea);
 
@@ -319,7 +390,7 @@
     document.getElementById('regen-reply').addEventListener('click', ()=>{
         const input = document.getElementById('user-input').value.trim();
         if(!input) return; const k = extractKeywords(input); const s = analyzeSentiment(input); const c = analyzeComplexity(input);
-        const rep = generateReplyIntentV2(input, {keywords:k, sentiment:s, complexity:c, resonance:{ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR,TR:kokoroState.ER+kokoroState.GR+kokoroState.SR}, pmc: {state:'COHERENT'}, reaction: inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c})});
+        const rep = generateReplyIntentI18N(input, {keywords:k, sentiment:s, complexity:c, resonance:{ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR,TR:kokoroState.ER+kokoroState.GR+kokoroState.SR}, pmc: {state:'COHERENT'}, reaction: inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c})});
         renderReply(rep);
     });
 
@@ -521,11 +592,71 @@ function generateReplyIntentV2(input, ctx){
   return { tone, purpose, outline, proposedReply };
 }
 
+        // === i18n reply builder ===
+function generateReplyIntentI18N(input, ctx){
+  var keywords = ctx.keywords || []; var sentiment = ctx.sentiment || {polarity:'Neutral'};
+  var pmc = ctx.pmc || {state:'COHERENT'}; var reaction = ctx.reaction || {type:'要約＋分解提案'};
+
+  var tone = (pmc.state==='VIOLATED') ? t('tones.cautious')
+           : (pmc.state==='AT-RISK')  ? t('tones.gentle')
+           : (sentiment.polarity==='Positive' ? t('tones.warm')
+             : (sentiment.polarity==='Negative' ? t('tones.supportive') : t('tones.neutral')));
+
+  var purposeKey='inform';
+  if(/どう|やり方|how|手順|手伝|fix|solve/i.test(input)) purposeKey='solve';
+  else if(/意見|考え|why|なぜ|見解|insight/i.test(input)) purposeKey='insight';
+  else if(/まとめ|要約|要点|tl;dr|summary/i.test(input)) purposeKey='summarize';
+
+  var purpose = t('purpose.'+purposeKey);
+
+  var outlineMap = {
+    inform: (currentLocale==='ja' ? ['短い答え','補足1つ','深掘りの誘い'] : ['Short answer','One detail','Invite deep dive']),
+    solve: (currentLocale==='ja' ? ['状況の再述','原因/制約の仮説','手順式の解決策','次アクション'] : ['Restate','Hypotheses','Steps','Next action']),
+    insight: (currentLocale==='ja' ? ['問いの核抽出','視点の提示','含意・注意点','提案'] : ['Core question','View','Implications','Proposal']),
+    summarize: (currentLocale==='ja' ? ['要点3つ','不足情報','次の質問'] : ['3 bullets','Missing info','Next Q'])
+  };
+  var outline = outlineMap[purposeKey];
+
+  var lead = pick(t('leads.'+purposeKey));
+  var body = pick(t('bodies.'+purposeKey));
+  var tail = pick(t('closes'));
+
+  var safetyTag = (pmc.state!=='COHERENT') ? t('safety') : '';
+  var hint = '';
+  if(keywords.length){
+    hint = currentLocale==='ja'
+      ? '（'+ t('keywords') +': ' + keywords.slice(0,3).join(' / ') + '）'
+      : '('+ t('keywords') +': ' + keywords.slice(0,3).join(' / ') + ')';
+  }
+
+  var topicLabel = t('topic');
+  var reactionNote = (reaction.type==='慰撫＋問題解決') ? t('reactionNotes.soothe')
+                    : (reaction.type==='共感＋称賛') ? t('reactionNotes.praise')
+                    : t('reactionNotes.align');
+
+  var cleaned = (input||'').replace(/\s+/g,' ').trim();
+  var topicText = cleaned.substring(0,48) || (keywords[0]||'');
+  var ell = cleaned.length>48 ? '…' : '';
+
+  var proposedReply = lead + hint + safetyTag + ' ' + topicLabel + ': ' + topicText + ell + ' ' + body + ' ' + reactionNote + ' ' + tail;
+  return { tone: tone, purpose: purpose, outline: outline, proposedReply: proposedReply };
+}
+
         
     // ===== Utilities =====
     function clamp(x, lo, hi){ return Math.max(lo, Math.min(hi, x)); }
     function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
     function appendLog(text, cls, area){ const div = document.createElement('div'); div.className = cls||''; div.textContent = text; area.appendChild(div); area.scrollTop = area.scrollHeight; }
+   // init locale toggle
+window.addEventListener('DOMContentLoaded', function(){
+  var sel = document.getElementById('lang-switch');
+  if(sel){
+    sel.value = currentLocale;
+    sel.addEventListener('change', function(e){ setLocale(e.target.value); });
+  }
+  applyI18n();
+});
+
     </script>
 </body>
 </html>
