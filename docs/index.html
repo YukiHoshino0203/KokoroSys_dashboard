@@ -263,7 +263,7 @@
 
         // Step 5: *** Natural language reply intent ***
         appendLog('\n[STEP 5] 返答意図（自然言語）生成', 'processing', logArea);
-        const reply = generateReplyIntent(input, {keywords, sentiment, complexity, resonance:{ER:newER,GR:newGR,SR:newSR,IHR:newIHR,TR:newTR}, pmc, reaction});
+        const reply = generateReplyIntentV2(input, {keywords, sentiment, complexity, resonance:{ER:newER,GR:newGR,SR:newSR,IHR:newIHR,TR:newTR}, pmc, reaction});
         renderReply(reply);
         appendLog('返答草案を生成しました。', 'success', logArea);
 
@@ -319,7 +319,7 @@
     document.getElementById('regen-reply').addEventListener('click', ()=>{
         const input = document.getElementById('user-input').value.trim();
         if(!input) return; const k = extractKeywords(input); const s = analyzeSentiment(input); const c = analyzeComplexity(input);
-        const rep = generateReplyIntent(input, {keywords:k, sentiment:s, complexity:c, resonance:{ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR,TR:kokoroState.ER+kokoroState.GR+kokoroState.SR}, pmc: {state:'COHERENT'}, reaction: inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c})});
+        const rep = generateReplyIntentV2(input, {keywords:k, sentiment:s, complexity:c, resonance:{ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR,TR:kokoroState.ER+kokoroState.GR+kokoroState.SR}, pmc: {state:'COHERENT'}, reaction: inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c})});
         renderReply(rep);
     });
 
@@ -437,7 +437,91 @@
         const proposedReply = [sentence1, sentence2, sentence3, sentence4].join(' ');
         return { tone, purpose, outline, proposedReply };
     }
+// === Reply Intent v2 helpers ===
+function classifyIntent(input){
+  const jp = /[\u3040-\u30ff\u4e00-\u9faf]/.test(input);
+  if (/どう|やり方|手順|実装|fix|solve|how\b|step|手伝/i.test(input))
+    return {purpose: jp?'問題解決':'Problem-solving', outline: jp?['状況の再述','原因/制約の仮説','手順式の解決策','次アクション']:['Restate','Hypotheses','Steps','Next action']};
+  if (/なぜ|why\b|背景|理由|考え|見解|opinion|insight/i.test(input))
+    return {purpose: jp?'洞察共有':'Insight', outline: jp?['問いの核','視点','含意/注意','提案']:['Core question','View','Implications','Proposal']};
+  if (/まとめ|要約|要点|tl;dr|summary|list/i.test(input))
+    return {purpose: jp?'要約整理':'Summarize', outline: jp?['要点3つ','不足情報','次の質問']:['3 bullets','Missing info','Next Q']};
+  return {purpose: jp?'情報提供':'Inform', outline: jp?['短い答え','補足','深掘り誘導']:['Short answer','One detail','Invite deep dive']};
+}
 
+function summarizeInput(text, keywords){
+  const clean = text.replace(/\s+/g,' ').trim();
+  if (clean.length>48) return clean.slice(0,48)+'…';
+  if (keywords && keywords.length) return keywords.slice(0,4).join(' / ');
+  return clean || '無題';
+}
+
+function generateReplyIntentV2(input, ctx){
+  const {keywords, sentiment, pmc, reaction} = ctx;
+  const langIsJP = /[\u3040-\u30ff\u4e00-\u9faf]/.test(input);
+  const tone = pmc.state==='VIOLATED' ? (langIsJP?'慎重 / セーフティ優先':'Cautious / Safety-first')
+            : pmc.state==='AT-RISK'    ? (langIsJP?'やさしく控えめ':'Gentle / Low-arousal')
+            : sentiment.polarity==='Positive' ? (langIsJP?'温かい':'Warm')
+            : sentiment.polarity==='Negative' ? (langIsJP?'寄り添い':'Supportive')
+            : (langIsJP?'中立':'Neutral');
+
+  const intent  = classifyIntent(input);
+  const purpose = intent.purpose;
+  const outline = intent.outline.slice();
+  const topic   = summarizeInput(input, keywords);
+
+  const leadPool = {
+    '問題解決': langIsJP ? ['まず要点だけ端的に：','すぐ動ける形でまとめます：','最短ルートでいきます：'] : ['First, the essentials:','Here is a quick path:','Let’s go straight to it:'],
+    '洞察共有': langIsJP ? ['核心を先に言うね：','骨格だけ先に押さえると：','結論から：'] : ['Here is the core:','In essence:','Bottom line:'],
+    '要約整理': langIsJP ? ['要点は3つ：','大枠を先に：','短くまとめると：'] : ['Three key points:','High level:','In short:'],
+    '情報提供': langIsJP ? ['結論から簡潔に：','必要な情報だけ：','手短に：'] : ['Briefly:','Just the essentials:','In short:']
+  };
+  const bodyPool = {
+    '問題解決': langIsJP ? ['①現状→②仮説→③手順→④検証で進めます。','現状/制約→対策案→試行順の順で書きます。']
+                         : ['We will go 1) context 2) hypothesis 3) steps 4) checks.','Context/constraints → plan → ordered steps.'],
+    '洞察共有': langIsJP ? ['前提を軽く整え、立場が変わっても崩れない骨格にして共有します。','用語の粒度を合わせてから、視点と含意を提示します。']
+                         : ['Align on terms, then share a viewpoint and implications.','State assumptions, then give a robust framing.'],
+    '要約整理': langIsJP ? ['余分をそぎ落として判断に必要なところだけ残します。','混ざった論点を分離して短文に落とします。']
+                         : ['Trim to decisions-only information.','Separate mixed points and condense.'],
+    '情報提供': langIsJP ? ['必要最小限→具体例→補助資料の順で出します。','まず結論、その後に補足と例を。']
+                         : ['Answer → concrete example → pointers.','Conclusion first, then details and example.']
+  };
+  const closePool = langIsJP
+    ? ['次に一つだけ決めて進めよう。','ここから何を一つ試す？','続けるなら、いちばん楽な一手から行こう。']
+    : ['Pick one next step and move.','What’s the first small step?','Let’s start with the easiest action.'];
+
+  // 半乱択でバリエーション
+  const r = Math.random() + (kokoroState.processCount%7)/10;
+  const pick = (arr)=> arr[Math.floor((r*997)%arr.length)];
+  const lead = pick(leadPool[purpose]||leadPool['情報提供']);
+  const body = pick(bodyPool[purpose]||bodyPool['情報提供']);
+  const tail = pick(closePool);
+
+  const safetyTag = pmc.state!=='COHERENT'
+    ? (langIsJP?' ※安全のため控えめに回答します。':' *Answer toned down for safety.*')
+    : '';
+
+  const hint = keywords.length
+    ? (langIsJP?`（キーワード: ${keywords.slice(0,3).join(' / ')}）`:`(keywords: ${keywords.slice(0,3).join(' / ')})`)
+    : '';
+
+  const reactionNote =
+    reaction.type==='慰撫＋問題解決' ? (langIsJP?'不安を下げつつ具体策を置きます。':'We will reduce friction and give clear steps.')
+  : reaction.type==='共感＋称賛'     ? (langIsJP?'意図を肯定し、少し増幅します。':'Acknowledge and amplify your intent.')
+                                    : (langIsJP?'先に定義を合わせます。':'Let’s align terms first.');
+
+  const proposedReply = [
+    `${lead}${hint}${safetyTag}`,
+    langIsJP ? `テーマ: ${topic}` : `Topic: ${topic}`,
+    body,
+    reactionNote,
+    tail
+  ].join(' ');
+
+  return { tone, purpose, outline, proposedReply };
+}
+
+        
     // ===== Utilities =====
     function clamp(x, lo, hi){ return Math.max(lo, Math.min(hi, x)); }
     function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
