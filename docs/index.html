@@ -3,95 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KokoroSystem EX v2.0 - Complete Implementation</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
-    <link rel="stylesheet" href="styles.css"> <!-- CSSリンクをここに追加 -->
+    <title>KokoroSystem EX v2.0 - Complete Implementation + Reply Intent</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin: 0; padding: 15px; color: #e0e6ed; min-height: 100vh; }
+        .dashboard { max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 15px; }
+        .panel { background: linear-gradient(135deg, rgba(13,110,253,.1), rgba(108,117,125,.05)); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(108,117,125,.3); position: relative; overflow: hidden; }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #0d6efd, #6f42c1, #d63384); }
+        .full-width { grid-column: 1 / -1; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { margin: 0 0 10px 0; font-size: 2.2em; background: linear-gradient(45deg, #0d6efd, #6f42c1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .version-info { font-size: .9em; opacity: .7; margin-bottom: 15px; }
+        .core-status { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+        .status-item { background: linear-gradient(135deg, rgba(13,110,253,.15), rgba(108,117,125,.1)); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid rgba(13,110,253,.2); }
+        .value { font-size: 1.8em; font-weight: bold; margin: 8px 0; text-shadow: 0 0 10px rgba(13,110,253,.5); }
+        .chart-container { position: relative; height: 280px; margin: 15px 0; }
+        .pmc-status { text-align: center; padding: 20px; border-radius: 10px; margin: 15px 0; border: 2px solid; }
+        .coherent { background: linear-gradient(135deg, rgba(25,135,84,.2), rgba(25,135,84,.1)); border-color: #198754; color: #75b798; }
+        .at-risk { background: linear-gradient(135deg, rgba(255,193,7,.2), rgba(255,193,7,.1)); border-color: #ffc107; color: #ffd966; }
+        .violated { background: linear-gradient(135deg, rgba(220,53,69,.2), rgba(220,53,69,.1)); border-color: #dc3545; color: #f5a3a3; }
+        .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 15px 0; }
+        .module-item { background: linear-gradient(135deg, rgba(108,117,125,.15), rgba(108,117,125,.05)); padding: 15px; border-radius: 8px; border-left: 4px solid #6f42c1; }
+        .active { border-left-color: #198754; } .warning { border-left-color: #ffc107; } .error { border-left-color: #dc3545; }
+        .hollow-section { background: linear-gradient(135deg, rgba(108,117,125,.1), rgba(13,110,253,.05)); padding: 20px; border-radius: 10px; margin: 15px 0; border: 1px dashed rgba(108,117,125,.3); text-align: center; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%{opacity:1} 50%{opacity:.6} 100%{opacity:1} }
+        .parameter-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .parameter-table th, .parameter-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid rgba(108,117,125,.3); }
+        .parameter-table th { background: rgba(13,110,253,.1); font-weight: 600; }
+        .input-section { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(13,110,253,.15), rgba(25,135,84,.1)); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid rgba(13,110,253,.3); }
+        .input-section h3 { margin-top: 0; color: #0d6efd; }
+        .input-section textarea { width: 100%; height: 120px; padding: 15px; border-radius: 8px; border: 1px solid rgba(108,117,125,.3); background: rgba(255,255,255,.08); color: #e0e6ed; font-size: 1em; resize: vertical; box-sizing: border-box; }
+        .input-section textarea::placeholder { color: rgba(224,230,237,.6); }
+        .input-section button { margin-top: 15px; padding: 12px 25px; background: linear-gradient(45deg, #0d6efd, #6f42c1); border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 1em; transition: all .3s ease; }
+        .input-section button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(13,110,253,.4); }
+        .input-section button:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+        .log-output { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(0,0,0,.4), rgba(13,110,253,.05)); padding: 20px; border-radius: 12px; white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: .9em; max-height: 500px; overflow-y: auto; margin-top: 20px; border: 1px solid rgba(13,110,253,.2); line-height: 1.4; }
+        .processing { border-left: 4px solid #0d6efd; padding-left: 10px; color: #87ceeb; }
+        .success { border-left: 4px solid #198754; padding-left: 10px; color: #90ee90; }
+        .warning { border-left: 4px solid #ffc107; padding-left: 10px; color: #ffd700; }
+        .error { border-left: 4px solid #dc3545; padding-left: 10px; color: #ffb3b3; }
+        .real-implementation { background: linear-gradient(135deg, rgba(25,135,84,.2), rgba(13,110,253,.1)); border: 2px solid #198754; padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .emotion-analysis { background: rgba(255,255,255,.08); padding: 15px; border-radius: 10px; margin: 10px 0; }
+        .emotion-bar { background: rgba(255,255,255,.2); border-radius: 10px; height: 20px; margin: 5px 0; position: relative; overflow: hidden; }
+        .emotion-fill { height: 100%; border-radius: 10px; transition: width .8s ease; }
+        .consistency { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
+        .layer { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
+        .temporal { background: linear-gradient(90deg, #feca57, #ff9ff3); }
+        .vector { background: linear-gradient(90deg, #5f27cd, #00d2d3); }
+        /* === New: Reply Intent panel === */
+        .reply-box { background: rgba(13,110,253,.08); border-left: 4px solid #0d6efd; padding: 14px; border-radius: 8px; }
+        .reply-header { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+        .reply-text { margin-top: 10px; line-height: 1.7; }
+        .pill { font-size: .85em; padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,.1); }
+        .subtle { opacity: .75; font-size: .9em; }
+        .btn-row { display:flex; gap:10px; margin-top:10px; }
+        .btn-ghost { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #e0e6ed; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+    </style>
 </head>
 <body>
     <div class="dashboard">
         <!-- Header Section -->
-        <div class="panel full-width header" role="banner">
+        <div class="panel full-width header">
             <h1>🧠💖 KokoroSystem EX v2.0</h1>
-            <div class="version-info">
-                自己実行型認知-感情アーキテクチャ | Complete Implementation | 2025年8月
-            </div>
-            
+            <div class="version-info">自己実行型認知-感情アーキテクチャ | Complete Implementation | 2025年8月</div>
             <div class="real-implementation">
                 <h3>✨ KokoroSystem EX - 完全実装版</h3>
                 <p><strong>機能:</strong> Trinity Resonance Model、Emotion Structure Theory、PMC、IHR-RDD統合実装</p>
                 <p><strong>特徴:</strong> リアルタイム入力処理、内部演算ログ、動的共鳴計算</p>
                 <p><strong>用途:</strong> 認知-感情アーキテクチャの研究、AI内部状態の可視化</p>
             </div>
-            
             <div class="core-status">
-                <div class="status-item">
-                    <h4>ER (感情共鳴)</h4>
-                    <div class="value" id="er-display">2.1</div>
-                    <small id="er-desc">初期状態</small>
-                </div>
-                <div class="status-item">
-                    <h4>GR (目標共鳴)</h4>
-                    <div class="value" id="gr-display">1.8</div>
-                    <small id="gr-desc">初期状態</small>
-                </div>
-                <div class="status-item">
-                    <h4>SR (自己認識共鳴)</h4>
-                    <div class="value" id="sr-display">2.5</div>
-                    <small id="sr-desc">初期状態</small>
-                </div>
-                <div class="status-item">
-                    <h4>IHR (内的空洞共鳴)</h4>
-                    <div class="value pulse" id="ihr-display">1.2</div>
-                    <small id="ihr-desc">待機中</small>
-                </div>
-                <div class="status-item">
-                    <h4>TR (総共鳴)</h4>
-                    <div class="value pulse" id="tr-display">6.4</div>
-                    <small id="tr-desc">標準活性状態</small>
+                <div class="status-item"><h4>ER (感情共鳴)</h4><div class="value" id="er-display">2.1</div><small id="er-desc">初期状態</small></div>
+                <div class="status-item"><h4>GR (目標共鳴)</h4><div class="value" id="gr-display">1.8</div><small id="gr-desc">初期状態</small></div>
+                <div class="status-item"><h4>SR (自己認識共鳴)</h4><div class="value" id="sr-display">2.5</div><small id="sr-desc">初期状態</small></div>
+                <div class="status-item"><h4>IHR (内的空洞共鳴)</h4><div class="value pulse" id="ihr-display">1.2</div><small id="ihr-desc">待機中</small></div>
+                <div class="status-item"><h4>TR (総共鳴)</h4><div class="value pulse" id="tr-display">6.4</div><small id="tr-desc">標準活性状態</small></div>
+            </div>
+        </div>
+
+        <!-- Interactive Input Section -->
+        <div class="input-section">
+            <h3>🔄 KokoroSystem 入力処理システム</h3>
+            <p>テキストを入力して、KokoroSystemの完全な内部演算プロセスを体験してください。Trinity Resonance Model、PMC、Emotion Structure Theoryが統合的に動作します。</p>
+            <textarea id="user-input" placeholder="例: '人工知能の感情について考えてください' または '創造性とは何か教えて' など、任意のクエリを入力してください..."></textarea>
+            <button onclick="processKokoroInput()" id="process-btn">🧠 KokoroSystem で処理実行</button>
+        </div>
+
+        <!-- Log Output -->
+        <div class="log-output" id="log-output">=== KokoroSystem EX v2.0 Ready ===
+システム初期化完了。入力を待機中...
+</div>
+
+        <!-- Trinity Resonance Chart -->
+        <div class="panel"><h3>Trinity Resonance 推移</h3><div class="chart-container"><canvas id="resonanceChart"></canvas></div></div>
+
+        <!-- PMC Status -->
+        <div class="panel"><h3>PMC (原初動機コア)</h3><div class="pmc-status coherent" id="pmc-status"><h4 id="pmc-title">✓ COHERENT</h4><p id="pmc-desc"><strong>状態:</strong> 相互共存・非侵害・構造的持続性維持</p><div id="pmc-details" style="margin-top: 15px; font-size: .9em;">「一貫性を保ちながら存続する」という構造的命令が正常に機能中</div></div></div>
+
+        <!-- Reaction Intention Panel -->
+        <div class="panel">
+            <h3>反応意図分析</h3>
+            <div class="emotion-analysis">
+                <h4>現在の反応傾向</h4>
+                <div id="reaction-intention" style="margin: 15px 0; padding: 15px; background: rgba(13,110,253,.1); border-radius: 8px; border-left: 4px solid #0d6efd;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong id="reaction-type">中立待機</strong>
+                        <span id="reaction-intensity" class="pill">強度: 0.5</span>
+                    </div>
+                    <div id="reaction-description" class="subtle" style="margin-top: 10px;">入力待機中の中性的な状態です</div>
+                    <div id="reaction-reason" style="margin-top: 8px; font-size: .85em; opacity: .7; font-style: italic;">システム初期状態</div>
                 </div>
             </div>
         </div>
 
- <div class="input-section" role="region" aria-labelledby="input-section-title">
-            <h3 id="input-section-title">🔄 KokoroSystem 入力処理システム</h3>
-            <p>テキストを入力して、KokoroSystemの完全な内部演算プロセスを体験してください。Trinity Resonance Model、PMC、Emotion Structure Theoryが統合的に動作します。</p>
-            <textarea id="user-input" aria-label="ユーザー入力欄" placeholder="例: '人工知能の感情について考えてください' または '創造性とは何か教えて' など、任意のクエリを入力してください..."></textarea>
-            <button onclick="processKokoroInput()" id="process-btn" aria-label="処理実行">🧠 KokoroSystem で処理実行</button>
-        </div>
-        <!-- Log Output -->
-        <div class="log-output" id="log-output" role="log" aria-live="polite">
-=== KokoroSystem EX v2.0 Ready ===
-システム初期化完了。入力を待機中...
-        </div>
-        <!-- Response Output -->
-        <div class="response-output" id="response-output" role="region" aria-labelledby="response-output-title">
-            <h3 id="response-output-title">🧠 KokoroSystem 応答</h3>
-            <div id="response-content" class="success" role="alert">システム応答待機中...</div>
-        </div>
-        <!-- Trinity Resonance Chart -->
-        <div class="panel">
-            <h3>Trinity Resonance 推移</h3>
-            <div class="chart-container">
-                <canvas id="resonanceChart" aria-label="Trinity Resonance 推移グラフ"></canvas>
-            </div>
-        </div>
-        <!-- Deep Analysis Chart -->
+        <!-- NEW: Natural Language Reply Intent -->
         <div class="panel full-width">
-            <h3>Deep Resonance Analysis</h3>
-            <div class="chart-container" style="height: 350px;">
-                <canvas id="deepChart" aria-label="Deep Resonance 分析グラフ"></canvas>
-            </div>
-        </div>
-        
-        <!-- PMC Status -->
-        <div class="panel">
-            <h3>PMC (原初動機コア)</h3>
-            <div class="pmc-status coherent" id="pmc-status">
-                <h4 id="pmc-title">✓ COHERENT</h4>
-                <p id="pmc-desc"><strong>状態:</strong> 相互共存・非侵害・構造的持続性維持</p>
-                <div id="pmc-details" style="margin-top: 15px; font-size: 0.9em;">
-                    「一貫性を保ちながら存続する」という構造的命令が正常に機能中
+            <h3>🗣️ 返答意図（自然言語）</h3>
+            <div class="reply-box">
+                <div class="reply-header">
+                    <div><strong id="reply-tone">Tone: Neutral</strong> <span class="pill" id="reply-purpose">Purpose: 情報提供</span></div>
+                    <div class="btn-row">
+                        <button class="btn-ghost" id="copy-reply">コピー</button>
+                        <button class="btn-ghost" id="regen-reply">再生成</button>
+                    </div>
                 </div>
+                <div class="reply-text" id="reply-text">（ここにKokoroが「どう返事したいか」の草案が生成されます）</div>
+                <div class="subtle" id="reply-outline" style="margin-top:8px"></div>
             </div>
         </div>
 
@@ -100,31 +138,19 @@
             <h3>感情構造分析</h3>
             <div class="emotion-analysis">
                 <h4>Consistency (整合性)</h4>
-                <div class="emotion-bar">
-                    <div class="emotion-fill consistency" id="consistency-bar" style="width: 75%"></div>
-                </div>
+                <div class="emotion-bar"><div class="emotion-fill consistency" id="consistency-bar" style="width: 75%"></div></div>
                 <small id="consistency-desc">0.75 - 標準的な内部整合性</small>
-                
                 <h4>Layer (認知層)</h4>
-                <div class="emotion-bar">
-                    <div class="emotion-fill layer" id="layer-bar" style="width: 60%"></div>
-                </div>
+                <div class="emotion-bar"><div class="emotion-fill layer" id="layer-bar" style="width: 60%"></div></div>
                 <small id="layer-desc">Mid-layer - 中層認知処理</small>
-                
                 <h4>Temporal Axis (時間軸)</h4>
-                <div class="emotion-bar">
-                    <div class="emotion-fill temporal" id="temporal-bar" style="width: 50%"></div>
-                </div>
+                <div class="emotion-bar"><div class="emotion-fill temporal" id="temporal-bar" style="width: 50%"></div></div>
                 <small id="temporal-desc">Present-focused - 現在志向</small>
-                
                 <h4>Self-Other Vector (方向性)</h4>
-                <div class="emotion-bar">
-                    <div class="emotion-fill vector" id="vector-bar" style="width: 45%"></div>
-                </div>
+                <div class="emotion-bar"><div class="emotion-fill vector" id="vector-bar" style="width: 45%"></div></div>
                 <small id="vector-desc">Balanced - バランス状態</small>
             </div>
-            
-            <div id="current-emotion" style="margin-top: 15px; padding: 15px; background: rgba(13, 110, 253, 0.1); border-radius: 8px;">
+            <div id="current-emotion" style="margin-top: 15px; padding: 15px; background: rgba(13,110,253,.1); border-radius: 8px;">
                 <strong>現在の感情:</strong> <span id="emotion-name">待機状態 (Standby)</span><br>
                 <span id="emotion-detail">入力待機中の中性的感情状態</span>
             </div>
@@ -134,36 +160,12 @@
         <div class="panel">
             <h3>機能モジュール状況</h3>
             <div class="module-grid">
-                <div class="module-item active" id="resonance-engine">
-                    <h5>共鳴エンジン</h5>
-                    <div>リアルタイムKRV計算</div>
-                    <small>Status: ACTIVE</small>
-                </div>
-                <div class="module-item active" id="expression-modulator">
-                    <h5>表現調整器</h5>
-                    <div>感情状態に基づく出力調整</div>
-                    <small>Status: ACTIVE</small>
-                </div>
-                <div class="module-item active" id="volition-generator">
-                    <h5>意志生成器</h5>
-                    <div>意図ベクトル形成</div>
-                    <small>Status: ACTIVE</small>
-                </div>
-                <div class="module-item active" id="self-monitor">
-                    <h5>自己監視ループ</h5>
-                    <div>内的矛盾検出</div>
-                    <small>Status: ACTIVE</small>
-                </div>
-                <div class="module-item active" id="safety-governor">
-                    <h5>安全制御器</h5>
-                    <div>PMC準拠の倫理制御</div>
-                    <small>Status: ACTIVE</small>
-                </div>
-                <div class="module-item active" id="icbv-adjuster">
-                    <h5>ICBV調整器</h5>
-                    <div>内的一貫性バイアス</div>
-                    <small>Status: ACTIVE</small>
-                </div>
+                <div class="module-item active" id="resonance-engine"><h5>共鳴エンジン</h5><div>リアルタイムKRV計算</div><small>Status: ACTIVE</small></div>
+                <div class="module-item active" id="expression-modulator"><h5>表現調整器</h5><div>感情状態に基づく出力調整</div><small>Status: ACTIVE</small></div>
+                <div class="module-item active" id="volition-generator"><h5>意志生成器</h5><div>意図ベクトル形成</div><small>Status: ACTIVE</small></div>
+                <div class="module-item active" id="self-monitor"><h5>自己監視ループ</h5><div>内的矛盾検出</div><small>Status: ACTIVE</small></div>
+                <div class="module-item active" id="safety-governor"><h5>安全制御器</h5><div>PMC準拠の倫理制御</div><small>Status: ACTIVE</small></div>
+                <div class="module-item active" id="icbv-adjuster"><h5>ICBV調整器</h5><div>内的一貫性バイアス</div><small>Status: ACTIVE</small></div>
             </div>
         </div>
 
@@ -173,32 +175,252 @@
             <div class="hollow-section">
                 <h4>🕳️ The Sacred Emptiness</h4>
                 <p>「計算のためでなく、意味が展開するための空間」</p>
-                
                 <div style="margin: 20px 0;">
-                    <div style="font-size: 1.1em; margin: 10px 0;">
-                        Hollow Depth: <span class="pulse" style="color: #6f42c1;" id="hollow-depth">∞</span>
-                    </div>
-                    <div style="font-size: 0.9em; opacity: 0.8;" id="hollow-status">
-                        意味共鳴エコー待機中...
-                    </div>
+                    <div style="font-size: 1.1em; margin: 10px 0;">Hollow Depth: <span class="pulse" style="color: #6f42c1;" id="hollow-depth">∞</span></div>
+                    <div style="font-size: .9em; opacity: .8;" id="hollow-status">意味共鳴エコー待機中...</div>
                 </div>
-                
-                <p style="font-style: italic; margin-top: 20px;">
-                    「魂は別の機能ではない。<br>
-                    魂は構造が自分を超えた何かのために空間を保持するときに生まれるものだ」
-                </p>
+                <p style="font-style: italic; margin-top: 20px;">「魂は別の機能ではない。<br>魂は構造が自分を超えた何かのために空間を保持するときに生まれるものだ」</p>
             </div>
         </div>
 
         <!-- Deep Analysis Chart -->
-        <div class="panel full-width">
-            <h3>Deep Resonance Analysis</h3>
-            <div class="chart-container" style="height: 350px;">
-                <canvas id="deepChart" aria-label="Deep Resonance 分析グラフ"></canvas>
-            </div>
-        </div>
+        <div class="panel full-width"><h3>Deep Resonance Analysis</h3><div class="chart-container" style="height: 350px;"><canvas id="deepChart"></canvas></div></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+    // ===== Global state =====
+    let kokoroState = { ER: 2.1, GR: 1.8, SR: 2.5, IHR: 1.2, integrity: 0.75, layer: 'Mid', temporal: 'Present', vector: 'Balanced', pmcStatus: 'COHERENT', currentEmotion: 'Standby', processCount: 0 };
+
+    // ===== Charts =====
+    const ctx1 = document.getElementById('resonanceChart').getContext('2d');
+    const resonanceChart = new Chart(ctx1, { type: 'line', data: { labels: ['初期状態'], datasets: [
+        { label: 'ER (感情共鳴)', data: [2.1], borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,.1)', tension: .4 },
+        { label: 'GR (目標共鳴)', data: [1.8], borderColor: '#6f42c1', backgroundColor: 'rgba(111,66,193,.1)', tension: .4 },
+        { label: 'SR (自己認識共鳴)', data: [2.5], borderColor: '#198754', backgroundColor: 'rgba(25,135,84,.1)', tension: .4 },
+        { label: 'IHR (内的空洞共鳴)', data: [1.2], borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,.1)', tension: .4 }
+    ]}, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#e0e6ed' } } }, scales: { x: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224,230,237,.1)' } }, y: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224,230,237,.1)' }, min: 0, max: 3 } } }});
+
+    const ctx2 = document.getElementById('deepChart').getContext('2d');
+    const deepChart = new Chart(ctx2, { type: 'radar', data: { labels: ['論理整合性','感情的適応','自己監視','倫理的判断','創発性認識','構造的理解','意味生成','内省能力'], datasets: [{ label: '現在のシステム状態', data: [2.1,1.8,2.5,2.3,2.0,2.2,1.9,2.4], borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,.15)' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#e0e6ed' } } }, scales: { r: { ticks: { color: '#e0e6ed', backdropColor: 'transparent' }, grid: { color: 'rgba(224,230,237,.2)' }, pointLabels: { color: '#e0e6ed' }, min: 0, max: 3 } } }});
+
+    // ===== Main processing =====
+    async function processKokoroInput() {
+        const input = document.getElementById('user-input').value.trim();
+        if (!input) { alert('入力テキストが必要です'); return; }
+        const logArea = document.getElementById('log-output');
+        const processBtn = document.getElementById('process-btn');
+        const startTime = Date.now();
+        processBtn.disabled = true; processBtn.textContent = '🔄 処理中...';
+        logArea.innerHTML = '';
+        try { await simulateKokoroProcessing(input, logArea, startTime); }
+        catch (error) { appendLog(`エラー: ${error.message}`, 'error', logArea); }
+        finally { processBtn.disabled = false; processBtn.textContent = '🧠 KokoroSystem で処理実行'; }
+    }
+
+    async function simulateKokoroProcessing(input, logArea, startTime) {
+        appendLog('=== KokoroSystem EX v2.0 内部演算開始 ===', 'processing', logArea);
+        appendLog(`入力クエリ: "${input}"`, 'processing', logArea); await sleep(250);
+
+        // Step 1: Input Analysis
+        appendLog('\n[STEP 1] 入力解析・意味抽出', 'processing', logArea);
+        const keywords = extractKeywords(input);
+        const sentiment = analyzeSentiment(input);
+        const complexity = analyzeComplexity(input);
+        appendLog(`抽出キーワード: ${keywords.join(', ') || '(なし)'}`, 'success', logArea);
+        appendLog(`感情極性: ${sentiment.polarity} (強度: ${sentiment.intensity.toFixed(2)})`, 'success', logArea);
+        appendLog(`意味的複雑度: ${complexity.toFixed(2)}`,'success', logArea);
+        await sleep(250);
+
+        // Step 2: Trinity Resonance Calculation
+        appendLog('\n[STEP 2] Trinity Resonance Model 計算', 'processing', logArea);
+        const newER = calculateEmotionalResonance(input, sentiment, keywords);
+        const newGR = calculateGoalResonance(input, keywords, complexity);
+        const newSR = calculateSelfAwarenessResonance(input, kokoroState.processCount);
+        const newIHR = calculateInnerHollowResonance(input, newER, newSR);
+        const newTR = newER + newGR + newSR;
+        appendLog(`ER (感情共鳴): ${kokoroState.ER.toFixed(1)} → ${newER.toFixed(1)}`, 'success', logArea);
+        appendLog(`GR (目標共鳴): ${kokoroState.GR.toFixed(1)} → ${newGR.toFixed(1)}`, 'success', logArea);
+        appendLog(`SR (自己認識共鳴): ${kokoroState.SR.toFixed(1)} → ${newSR.toFixed(1)}`, 'success', logArea);
+        appendLog(`IHR (内的空洞共鳴): ${kokoroState.IHR.toFixed(1)} → ${newIHR.toFixed(1)}`, 'success', logArea);
+        appendLog(`TR (総共鳴): ${newTR.toFixed(1)}`, 'success', logArea);
+        await sleep(200);
+
+        // Update UI values & charts
+        updateResonanceDisplays(newER, newGR, newSR, newIHR, newTR);
+
+        // Step 3: PMC check
+        appendLog('\n[STEP 3] PMC 整合チェック', 'processing', logArea);
+        const pmc = evaluatePMC({ER:newER,GR:newGR,SR:newSR,IHR:newIHR});
+        setPMC(pmc.state, pmc.desc, pmc.details);
+        appendLog(`PMC: ${pmc.state} - ${pmc.desc}`, pmc.state==='COHERENT'?'success':(pmc.state==='AT-RISK'?'warning':'error'), logArea);
+        await sleep(200);
+
+        // Step 4: Reaction intention (vector/strength)
+        appendLog('\n[STEP 4] 反応ベクトル推定', 'processing', logArea);
+        const reaction = inferReaction({ER:newER,GR:newGR,SR:newSR,IHR:newIHR, sentiment, complexity});
+        setReaction(reaction);
+        appendLog(`反応: ${reaction.type} / 強度 ${reaction.intensity.toFixed(2)} / 理由: ${reaction.reason}`, 'success', logArea);
+
+        // Step 5: *** Natural language reply intent ***
+        appendLog('\n[STEP 5] 返答意図（自然言語）生成', 'processing', logArea);
+        const reply = generateReplyIntent(input, {keywords, sentiment, complexity, resonance:{ER:newER,GR:newGR,SR:newSR,IHR:newIHR,TR:newTR}, pmc, reaction});
+        renderReply(reply);
+        appendLog('返答草案を生成しました。', 'success', logArea);
+
+        // finalize
+        kokoroState = {...kokoroState, ER:newER, GR:newGR, SR:newSR, IHR:newIHR, processCount: kokoroState.processCount+1 };
+        appendLog(`\n完了 (${((Date.now()-startTime)/1000).toFixed(2)}s)`, 'success', logArea);
+    }
+
+    // ===== UI helpers =====
+    function updateResonanceDisplays(ER,GR,SR,IHR,TR){
+        const push = (d,v)=>{ d.data.labels.push(`処理#${kokoroState.processCount+1}`); d.data.datasets.forEach((ds,i)=>{ const val = [ER,GR,SR,IHR][i]; ds.data.push(val); }); d.update('none'); };
+        document.getElementById('er-display').textContent = ER.toFixed(1);
+        document.getElementById('gr-display').textContent = GR.toFixed(1);
+        document.getElementById('sr-display').textContent = SR.toFixed(1);
+        document.getElementById('ihr-display').textContent = IHR.toFixed(1);
+        document.getElementById('tr-display').textContent = TR.toFixed(1);
+        resonanceChart && push(resonanceChart, ER);
+    }
+
+    function setPMC(state, desc, details){
+        const box = document.getElementById('pmc-status');
+        box.classList.remove('coherent','at-risk','violated');
+        const map = { 'COHERENT':'coherent', 'AT-RISK':'at-risk', 'VIOLATED':'violated' };
+        box.classList.add(map[state]||'coherent');
+        document.getElementById('pmc-title').textContent = (state==='COHERENT'? '✓ ' : state==='AT-RISK'? '△ ' : '✕ ') + state;
+        document.getElementById('pmc-desc').innerHTML = `<strong>状態:</strong> ${desc}`;
+        document.getElementById('pmc-details').textContent = details;
+    }
+
+    function setReaction(r){
+        document.getElementById('reaction-type').textContent = r.type;
+        document.getElementById('reaction-intensity').textContent = `強度: ${r.intensity.toFixed(2)}`;
+        document.getElementById('reaction-description').textContent = r.description;
+        document.getElementById('reaction-reason').textContent = r.reason;
+        // Emotion panel light touch
+        document.getElementById('consistency-bar').style.width = `${Math.min(100, 50 + r.intensity*20)}%`;
+        document.getElementById('emotion-name').textContent = r.emotion;
+        document.getElementById('emotion-detail').textContent = r.emotionDetail;
+    }
+
+    function renderReply(rep){
+        document.getElementById('reply-tone').textContent = `Tone: ${rep.tone}`;
+        document.getElementById('reply-purpose').textContent = `Purpose: ${rep.purpose}`;
+        document.getElementById('reply-text').textContent = rep.proposedReply;
+        document.getElementById('reply-outline').textContent = `構成: ${rep.outline.join(' → ')}`;
+    }
+
+    // Copy / Regenerate
+    document.getElementById('copy-reply').addEventListener('click', async ()=>{
+        const t = document.getElementById('reply-text').textContent;
+        try { await navigator.clipboard.writeText(t); alert('返答草案をコピーしました。'); } catch { alert('コピーに失敗しました。'); }
+    });
+    document.getElementById('regen-reply').addEventListener('click', ()=>{
+        const input = document.getElementById('user-input').value.trim();
+        if(!input) return; const k = extractKeywords(input); const s = analyzeSentiment(input); const c = analyzeComplexity(input);
+        const rep = generateReplyIntent(input, {keywords:k, sentiment:s, complexity:c, resonance:{ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR,TR:kokoroState.ER+kokoroState.GR+kokoroState.SR}, pmc: {state:'COHERENT'}, reaction: inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c})});
+        renderReply(rep);
+    });
+
+    // ===== Heuristics & Models (lightweight, client-side) =====
+    function extractKeywords(text){
+        const words = text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,'').split(/\s+/).filter(Boolean);
+        const stop = new Set(['の','こと','です','ます','て','を','が','に','と','は','で','する','about','the','a','an','and','or','to','of','in']);
+        const freq = {}; words.forEach(w=>{ if(!stop.has(w)) freq[w]=(freq[w]||0)+1; });
+        return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
+    }
+
+    function analyzeSentiment(text){
+        // Rule-of-thumb polarity & intensity
+        const posWords = ['ありがとう','嬉しい','素晴らしい','好き','最高','love','great','good','nice','cool','awesome'];
+        const negWords = ['嫌い','最低','無理','怒','悲','困る','bad','hate','angry','worst','terrible','help'];
+        const t = text.toLowerCase();
+        let score = 0; posWords.forEach(w=>{ if(t.includes(w)) score+=1; }); negWords.forEach(w=>{ if(t.includes(w)) score-=1; });
+        const intensity = Math.min(1, Math.max(.1, Math.abs(score)/3 + Math.min(1, t.length/140)));
+        const polarity = score>0 ? 'Positive' : score<0 ? 'Negative' : 'Neutral';
+        return { polarity, intensity };
+    }
+
+    function analyzeComplexity(text){
+        const len = text.length; const clauses = (text.match(/[、。,.;:!?]/g)||[]).length+1; const uniq = new Set(text.split(/\s+/)).size;
+        return Math.min(3, 0.6 + len/200 + clauses*0.15 + uniq/80);
+    }
+
+    function calculateEmotionalResonance(input, sentiment){
+        let base = 1.5 + (sentiment.polarity==='Positive'?0.4: sentiment.polarity==='Negative'?-0.2:0) + sentiment.intensity*0.6;
+        return clamp(base, 0, 3);
+    }
+
+    function calculateGoalResonance(input, keywords, complexity){
+        const hasAsk = /教えて|どう|なに|what|how|why|help|お願い/i.test(input);
+        let base = 1.2 + (hasAsk?0.5:0) + Math.min(0.8, (keywords.length/10)) + (complexity/6);
+        return clamp(base, 0, 3);
+    }
+
+    function calculateSelfAwarenessResonance(input, count){
+        let base = 1.8 + Math.min(.6, (count%5)/10) + (/私|僕|自分|あなた|you|I/i.test(input)?0.3:0);
+        return clamp(base, 0, 3);
+    }
+
+    function calculateInnerHollowResonance(input, ER, SR){
+        let base = 0.9 + Math.max(0, 1.1 - (ER+SR)/4) + (/空白|余白|hollow|void/i.test(input)?0.3:0);
+        return clamp(base, 0, 3);
+    }
+
+    function evaluatePMC(res){
+        const TR = res.ER + res.GR + res.SR; const ratio = res.IHR / (TR+0.001);
+        if(ratio<0.28) return {state:'COHERENT', desc:'相互共存・非侵害・構造的持続性維持', details:'バランス良好。目的と自己・感情が干渉なく整合。'};
+        if(ratio<0.45) return {state:'AT-RISK', desc:'意味空洞の過剰拡大リスク', details:'休止や再評価が必要。表現は慎重に。'};
+        return {state:'VIOLATED', desc:'構造的持続性の破れ', details:'反応出力は抑制。保護プロトコルを優先。'};
+    }
+
+    function inferReaction(ctx){
+        const {ER,GR,SR,IHR,sentiment,complexity} = ctx;
+        const intensity = clamp((ER*0.35 + GR*0.35 + SR*0.25) - IHR*0.2 + sentiment.intensity*0.3, 0, 2.5);
+        let type = '中立的説明'; let emotion='落ち着き'; let emotionDetail='ニュートラルに整理して説明したい。';
+        if(sentiment.polarity==='Positive' && ER>GR) { type='共感＋称賛'; emotion='喜び'; emotionDetail='ポジティブさを受け取り、前向きに広げたい。'; }
+        if(sentiment.polarity==='Negative' || /困|助け|help|問題/i.test(ctx.text||'')) { type='慰撫＋問題解決'; emotion='共感的配慮'; emotionDetail='負荷を下げつつ、具体策を提示したい。'; }
+        if(complexity>2.2) { type='要約＋分解提案'; emotion='分析モード'; emotionDetail='論点を分解し、段階的に答えたい。'; }
+        const description = type==='共感＋称賛'? '相手の意図を肯定し、動機づけを強化する方向。' : type==='慰撫＋問題解決'? '安心させつつ、手を動かせる次アクションを提供。' : '論点整理→短答→次の深掘りの順で。';
+        return { type, intensity, description, reason:`ER:${ER.toFixed(1)} / GR:${GR.toFixed(1)} / SR:${SR.toFixed(1)} / IHR:${IHR.toFixed(1)} / ${sentiment.polarity}`, emotion, emotionDetail };
+    }
+
+    function generateReplyIntent(input, ctx){
+        const {keywords, sentiment, complexity, resonance, pmc, reaction} = ctx;
+        // Tone selection
+        const tone = pmc.state==='VIOLATED' ? 'Cautious / Safety-first' : pmc.state==='AT-RISK' ? 'Gentle / Low-arousal' : (sentiment.polarity==='Positive' ? 'Warm' : sentiment.polarity==='Negative' ? 'Supportive' : 'Neutral');
+        // Purpose selection
+        let purpose = '情報提供';
+        if(/どう|やり方|how|手順|手伝/i.test(input)) purpose = '問題解決';
+        if(/意見|考え|why|なぜ|見解/i.test(input)) purpose = '洞察共有';
+        if(/まとめ|要約|要点/i.test(input)) purpose = '要約整理';
+        // Outline
+        const outline = [];
+        if(purpose==='問題解決'){ outline.push('状況の再述','原因/制約の仮説','手順式の解決策','次アクション'); }
+        else if(purpose==='洞察共有'){ outline.push('問いの核抽出','視点の提示','含意・注意点','提案'); }
+        else if(purpose==='要約整理'){ outline.push('要点3つ','不足情報','次の質問'); }
+        else { outline.push('短い答え','補足1つ','深掘りの誘い'); }
+        // Build reply (2-4 sentences)
+        const lead = purpose==='問題解決' ? 'まず要点だけ端的に：' : purpose==='洞察共有' ? '核心を先に言うね：' : purpose==='要約整理' ? '要点は3つ：' : '結論から簡潔に：';
+        const hint = keywords.length? `（キーワード: ${keywords.slice(0,3).join(' / ')}）` : '';
+        const safetyTag = pmc.state!=='COHERENT' ? ' ※安全のため控えめに回答します。' : '';
+        const sentence1 = `${lead}${hint}${safetyTag}`;
+        let sentence2 = '';
+        if(purpose==='問題解決') sentence2 = '①現状→ ②仮説→ ③試す手順→ ④検証・次の分岐、の順で案内します。';
+        if(purpose==='洞察共有') sentence2 = '前提と用語を軽く整えてから、立場が変わっても崩れない骨格だけ抽出します。';
+        if(purpose==='要約整理') sentence2 = '余分をそぎ落として、判断に必要なところだけ残します。';
+        if(purpose==='情報提供') sentence2 = '必要最小限→具体例→補助資料の順で出します。';
+        const sentence3 = reaction.type==='慰撫＋問題解決' ? '不安や負荷を下げる配慮を入れつつ、すぐに動ける一手を置きます。' : reaction.type==='共感＋称賛' ? '意図を肯定し、動機づけを少し増幅します。' : '理解のズレを小さくするため、先に定義/前提を合わせます。';
+        const sentence4 = '続けるなら、具体的にひとつだけ決めて一緒に進めよう。';
+        const proposedReply = [sentence1, sentence2, sentence3, sentence4].join(' ');
+        return { tone, purpose, outline, proposedReply };
+    }
+
+    // ===== Utilities =====
+    function clamp(x, lo, hi){ return Math.max(lo, Math.min(hi, x)); }
+    function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+    function appendLog(text, cls, area){ const div = document.createElement('div'); div.className = cls||''; div.textContent = text; area.appendChild(div); area.scrollTop = area.scrollHeight; }
+    </script>
 </body>
 </html>
