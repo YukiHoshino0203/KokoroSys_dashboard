@@ -15,81 +15,100 @@ let kokoroState = {
 };
 
 let isProcessing = false;
+let resonanceChart, deepChart;
 
-// Chart initialization
-const ctx1 = document.getElementById('resonanceChart').getContext('2d');
-const resonanceChart = new Chart(ctx1, {
-    type: 'line',
-    data: {
-        labels: ['初期状態'],
-        datasets: [{
-            label: 'ER (感情共鳴)',
-            data: [2.1],
-            borderColor: '#0d6efd',
-            backgroundColor: 'rgba(13, 110, 253, 0.1)',
-            tension: 0.4
-        }, {
-            label: 'GR (目標共鳴)',
-            data: [1.8],
-            borderColor: '#6f42c1',
-            backgroundColor: 'rgba(111, 66, 193, 0.1)',
-            tension: 0.4
-        }, {
-            label: 'SR (自己認識共鳴)',
-            data: [2.5],
-            borderColor: '#198754',
-            backgroundColor: 'rgba(25, 135, 84, 0.1)',
-            tension: 0.4
-        }, {
-            label: 'IHR (内的空洞共鳴)',
-            data: [1.2],
-            borderColor: '#dc3545',
-            backgroundColor: 'rgba(220, 53, 69, 0.1)',
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { labels: { color: '#e0e6ed' } }
-        },
-        scales: {
-            x: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224, 230, 237, 0.1)' } },
-            y: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224, 230, 237, 0.1)' }, min: 0, max: 3 }
-        }
+// Chart initialization with safety check
+function initializeCharts() {
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is not loaded. Please check the CDN or network connection.');
+        document.getElementById('log-output').innerHTML += '<span class="error">[ERROR] Chart.jsの読み込みに失敗しました。ネットワークを確認してください。</span>\n';
+        return;
     }
-});
 
-const ctx2 = document.getElementById('deepChart').getContext('2d');
-const deepChart = new Chart(ctx2, {
-    type: 'radar',
-    data: {
-        labels: ['論理整合性', '感情的適応', '自己監視', '倫理的判断', '創発性認識', '構造的理解', '意味生成', '内省能力'],
-        datasets: [{
-            label: '現在のシステム状態',
-            data: [2.1, 1.8, 2.5, 2.3, 2.0, 2.2, 1.9, 2.4],
-            borderColor: '#0d6efd',
-            backgroundColor: 'rgba(13, 110, 253, 0.15)',
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#e0e6ed' } } },
-        scales: {
-            r: {
-                ticks: { color: '#e0e6ed', backdropColor: 'transparent' },
-                grid: { color: 'rgba(224, 230, 237, 0.2)' },
-                pointLabels: { color: '#e0e6ed' },
-                min: 0,
-                max: 3
+    const ctx1 = document.getElementById('resonanceChart')?.getContext('2d');
+    const ctx2 = document.getElementById('deepChart')?.getContext('2d');
+
+    if (!ctx1 || !ctx2) {
+        console.error('Canvas elements not found. Check HTML IDs.');
+        document.getElementById('log-output').innerHTML += '<span class="error">[ERROR] グラフのキャンバス要素が見つかりません。HTMLを確認してください。</span>\n';
+        return;
+    }
+
+    resonanceChart = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ['初期状態'],
+            datasets: [{
+                label: 'ER (感情共鳴)',
+                data: [2.1],
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                tension: 0.4
+            }, {
+                label: 'GR (目標共鳴)',
+                data: [1.8],
+                borderColor: '#6f42c1',
+                backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                tension: 0.4
+            }, {
+                label: 'SR (自己認識共鳴)',
+                data: [2.5],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                tension: 0.4
+            }, {
+                label: 'IHR (内的空洞共鳴)',
+                data: [1.2],
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#e0e6ed' } } },
+            scales: {
+                x: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224, 230, 237, 0.1)' } },
+                y: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224, 230, 237, 0.1)' }, min: 0, max: 3 }
             }
         }
-    }
+    });
+
+    deepChart = new Chart(ctx2, {
+        type: 'radar',
+        data: {
+            labels: ['論理整合性', '感情的適応', '自己監視', '倫理的判断', '創発性認識', '構造的理解', '意味生成', '内省能力'],
+            datasets: [{
+                label: '現在のシステム状態',
+                data: [2.1, 1.8, 2.5, 2.3, 2.0, 2.2, 1.9, 2.4],
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.15)',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#e0e6ed' } } },
+            scales: {
+                r: {
+                    ticks: { color: '#e0e6ed', backdropColor: 'transparent' },
+                    grid: { color: 'rgba(224, 230, 237, 0.2)' },
+                    pointLabels: { color: '#e0e6ed' },
+                    min: 0,
+                    max: 3
+                }
+            }
+        }
+    });
+}
+
+// Initialize charts after DOM and scripts are loaded
+window.addEventListener('DOMContentLoaded', () => {
+    initializeCharts();
 });
 
-// Main processing function
+// 以降のコード（processKokoroInput, simulateKokoroProcessingなどは変更なし、以下に省略形）
 async function processKokoroInput() {
     const input = sanitizeInput(document.getElementById('user-input').value.trim());
     if (!input) {
