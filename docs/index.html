@@ -723,8 +723,17 @@
             appendLog('視覚化コンポーネント更新完了', 'success', logArea);
             await sleep(300);
 
-            // Step 9: Generate Response
-            appendLog('\n[STEP 9] システム応答生成', 'processing', logArea);
+            // Step 9: Reaction Intention Analysis
+            appendLog('\n[STEP 9] 反応意図分析', 'processing', logArea);
+            const reactionIntention = analyzeReactionIntention(input, sentiment, emotionStructure, kokoroState);
+            kokoroState.reactionIntention = reactionIntention; // Save to state
+            appendLog(`反応タイプ: ${reactionIntention.type}`, 'success', logArea);
+            appendLog(`意図強度: ${reactionIntention.intensity.toFixed(2)}`, 'success', logArea);
+            appendLog(`反応理由: ${reactionIntention.reason}`, 'success', logArea);
+            await sleep(400);
+
+            // Step 10: Generate Response
+            appendLog('\n[STEP 10] システム応答生成', 'processing', logArea);
             const systemResponse = generateKokoroResponse(input, kokoroState, emotionStructure);
             appendLog(`生成応答 (${systemResponse.responseType}): "${systemResponse.content}"`, 'success', logArea);
             await sleep(300);
