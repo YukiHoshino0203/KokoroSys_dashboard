@@ -52,31 +52,34 @@
             </div>
         </div>
 
-        <!-- Interactive Input Section -->
-        <div class="input-section" role="region" aria-labelledby="input-section-title">
+ <div class="input-section" role="region" aria-labelledby="input-section-title">
             <h3 id="input-section-title">🔄 KokoroSystem 入力処理システム</h3>
             <p>テキストを入力して、KokoroSystemの完全な内部演算プロセスを体験してください。Trinity Resonance Model、PMC、Emotion Structure Theoryが統合的に動作します。</p>
             <textarea id="user-input" aria-label="ユーザー入力欄" placeholder="例: '人工知能の感情について考えてください' または '創造性とは何か教えて' など、任意のクエリを入力してください..."></textarea>
             <button onclick="processKokoroInput()" id="process-btn" aria-label="処理実行">🧠 KokoroSystem で処理実行</button>
         </div>
-
         <!-- Log Output -->
         <div class="log-output" id="log-output" role="log" aria-live="polite">
 === KokoroSystem EX v2.0 Ready ===
 システム初期化完了。入力を待機中...
         </div>
-
         <!-- Response Output -->
         <div class="response-output" id="response-output" role="region" aria-labelledby="response-output-title">
             <h3 id="response-output-title">🧠 KokoroSystem 応答</h3>
             <div id="response-content" class="success" role="alert">システム応答待機中...</div>
         </div>
-
         <!-- Trinity Resonance Chart -->
         <div class="panel">
             <h3>Trinity Resonance 推移</h3>
             <div class="chart-container">
                 <canvas id="resonanceChart" aria-label="Trinity Resonance 推移グラフ"></canvas>
+            </div>
+        </div>
+        <!-- Deep Analysis Chart -->
+        <div class="panel full-width">
+            <h3>Deep Resonance Analysis</h3>
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="deepChart" aria-label="Deep Resonance 分析グラフ"></canvas>
             </div>
         </div>
         
