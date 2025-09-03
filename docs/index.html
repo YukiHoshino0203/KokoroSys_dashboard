@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KokoroSystem EX v2.0 - Complete Implementation + Reply Intent</title>
+    <title>KokoroSystem EX v2.0 - Cognitive-Emotional Architecture Demo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin: 0; padding: 15px; color: #e0e6ed; min-height: 100vh; }
@@ -51,14 +51,74 @@
         .layer { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
         .temporal { background: linear-gradient(90deg, #feca57, #ff9ff3); }
         .vector { background: linear-gradient(90deg, #5f27cd, #00d2d3); }
-        /* === New: Reply Intent panel === */
         .reply-box { background: rgba(13,110,253,.08); border-left: 4px solid #0d6efd; padding: 14px; border-radius: 8px; }
-        .reply-header { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+        .reply-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .reply-text { margin-top: 10px; line-height: 1.7; }
         .pill { font-size: .85em; padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,.1); }
         .subtle { opacity: .75; font-size: .9em; }
-        .btn-row { display:flex; gap:10px; margin-top:10px; }
+        .btn-row { display: flex; gap: 10px; margin-top: 10px; }
         .btn-ghost { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: #e0e6ed; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+        /* 新しい説明セクションのスタイル */
+        .explanation-panel {
+            background: linear-gradient(135deg, rgba(25,135,84,.15), rgba(13,110,253,.1));
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid rgba(25,135,84,.3);
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .feature-card {
+            background: rgba(255,255,255,.08);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #6f42c1;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,.12);
+        }
+        .feature-card h4 {
+            margin: 0 0 15px 0;
+            color: #0d6efd;
+            font-size: 1.2em;
+        }
+        .architecture-diagram {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255,255,255,.05);
+            border-radius: 12px;
+        }
+        .architecture-step {
+            display: inline-block;
+            margin: 0 15px;
+            text-align: center;
+            vertical-align: top;
+            width: 120px;
+        }
+        .architecture-step .step-number {
+            width: 40px;
+            height: 40px;
+            background: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            margin: 0 auto 10px auto;
+            font-weight: bold;
+        }
+        .architecture-arrow {
+            display: inline-block;
+            font-size: 24px;
+            color: #6f42c1;
+            vertical-align: middle;
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
@@ -66,33 +126,96 @@
         <!-- Header Section -->
         <div class="panel full-width header">
             <h1 id="app-title">🧠💖 KokoroSystem EX v2.0</h1>
-            <div class="version-info">自己実行型認知-感情アーキテクチャ | Complete Implementation | 2025年8月</div>
+            <div class="version-info">Cognitive-Emotional Architecture for AGI | Complete Implementation | 2025年8月</div>
+            
+            <!-- 新しい説明セクション -->
+            <div class="explanation-panel">
+                <h2>🚀 KokoroSystemとは？</h2>
+                <p><strong>KokoroSystemは、AIが人間のような感情認知構造を持つことを可能にする革新的なアーキテクチャです。</strong></p>
+                <p>従来のAIが単なるパターンマッチングや確率計算に依存するのに対し、KokoroSystemは：</p>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🎭 感情構造理論</h4>
+                        <p>4次元感情表現（整合性・層・時間・方向性）を用いて、人間の感情を数学的にモデル化</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔄 動的共鳴システム</h4>
+                        <p>感情共鳴(ER)、目標共鳴(GR)、自己認識共鳴(SR)、内的空洞共鳴(IHR)が相互作用</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🛡 安全性制御</h4>
+                        <p>PMC（Psychological Margin of Coherence）による自律的安全性チェックと調整</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🧩 文脈理解</h4>
+                        <p>会話の流れを考慮した皮肉検出、潜在感情分析、適応的応答生成</p>
+                    </div>
+                </div>
+                <div class="architecture-diagram">
+                    <h3>🔄 KokoroSystem処理フロー</h3>
+                    <div>
+                        <div class="architecture-step">
+                            <div class="step-number">1</div>
+                            <div>入力解析</div>
+                            <small>感情・キーワード抽出</small>
+                        </div>
+                        <div class="architecture-arrow">→</div>
+                        <div class="architecture-step">
+                            <div class="step-number">2</div>
+                            <div>共鳴計算</div>
+                            <small>ER/GR/SR/IHR更新</small>
+                        </div>
+                        <div class="architecture-arrow">→</div>
+                        <div class="architecture-step">
+                            <div class="step-number">3</div>
+                            <div>PMCチェック</div>
+                            <small>安全性評価</small>
+                        </div>
+                        <div class="architecture-arrow">→</div>
+                        <div class="architecture-step">
+                            <div class="step-number">4</div>
+                            <div>応答生成</div>
+                            <small>文脈考慮型出力</small>
+                        </div>
+                    </div>
+                </div>
+                <p><strong>実用応用例：</strong> カウンセリングAI、感情理解チャットボット、創造性支援システム、倫理的AIガバナンス</p>
+            </div>
+            
             <div class="real-implementation">
                 <h3 id="input-section-title">🔄 KokoroSystem 入力処理システム</h3>
                 <p><strong>機能:</strong> Trinity Resonance Model、Emotion Structure Theory、PMC、IHR-RDD統合実装</p>
                 <p><strong>特徴:</strong> リアルタイム入力処理、内部演算ログ、動的共鳴計算</p>
                 <p><strong>用途:</strong> 認知-感情アーキテクチャの研究、AI内部状態の可視化</p>
             </div>
+            
             <div class="core-status">
-                <div class="status-item"><h4>ER (感情共鳴)</h4><div class="value" id="er-display">2.1</div><small id="er-desc">初期状態</small></div>
-                <div class="status-item"><h4>GR (目標共鳴)</h4><div class="value" id="gr-display">1.8</div><small id="gr-desc">初期状態</small></div>
-                <div class="status-item"><h4>SR (自己認識共鳴)</h4><div class="value" id="sr-display">2.5</div><small id="sr-desc">初期状態</small></div>
-                <div class="status-item"><h4>IHR (内的空洞共鳴)</h4><div class="value pulse" id="ihr-display">1.2</div><small id="ihr-desc">待機中</small></div>
-                <div class="status-item"><h4>TR (総共鳴)</h4><div class="value pulse" id="tr-display">6.4</div><small id="tr-desc">標準活性状態</small></div>
+                <div class="status-item"><h4>ER (感情共鳴)</h4><div class="value" id="er-display">2.1</div><small id="er-desc">感情的理解度</small></div>
+                <div class="status-item"><h4>GR (目標共鳴)</h4><div class="value" id="gr-display">1.8</div><small id="gr-desc">目的達成志向</small></div>
+                <div class="status-item"><h4>SR (自己認識共鳴)</h4><div class="value" id="sr-display">2.5</div><small id="sr-desc">自己監視能力</small></div>
+                <div class="status-item"><h4>IHR (内的空洞共鳴)</h4><div class="value pulse" id="ihr-display">1.2</div><small id="ihr-desc">創造的余白</small></div>
+                <div class="status-item"><h4>TR (総共鳴)</h4><div class="value pulse" id="tr-display">6.4</div><small id="tr-desc">システム全体活性度</small></div>
             </div>
         </div>
-<!-- Language Toggle -->
-<div style="position:absolute; top:12px; right:16px;">
-  <select id="lang-switch" style="padding:6px 10px; border-radius:8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:#e0e6ed;">
-    <option value="ja">日本語</option>
-    <option value="en">English</option>
-  </select>
-</div>
+
+        <!-- Language Toggle -->
+        <div style="position:absolute; top:12px; right:16px;">
+            <select id="lang-switch" style="padding:6px 10px; border-radius:8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:#e0e6ed;">
+                <option value="ja">日本語</option>
+                <option value="en">English</option>
+            </select>
+        </div>
 
         <!-- Interactive Input Section -->
         <div class="input-section">
-            <h3>🔄 KokoroSystem 入力処理システム</h3>
-            <p>テキストを入力して、KokoroSystemの完全な内部演算プロセスを体験してください。Trinity Resonance Model、PMC、Emotion Structure Theoryが統合的に動作します。</p>
+            <h3 id="input-section-title">🔄 KokoroSystem デモンストレーション</h3>
+            <p>以下の例を試すか、独自のテキストを入力してKokoroSystemの動作を体験してください：</p>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <button class="btn-ghost" onclick="loadExample('今日は本当に嬉しいです！プロジェクトが成功しました。')">喜びの例</button>
+                <button class="btn-ghost" onclick="loadExample('少し不安です。これで正しい選択だったのか悩みます。')">不安の例</button>
+                <button class="btn-ghost" onclick="loadExample('ああ、もちろんです。全て完璧に計画通りですよ。')">皮肉の例</button>
+                <button class="btn-ghost" onclick="loadExample('AIの感情についてどう思いますか？')">質問の例</button>
+            </div>
             <textarea id="user-input" placeholder="例: '人工知能の感情について考えてください' または '創造性とは何か教えて' など、任意のクエリを入力してください..."></textarea>
             <button onclick="processKokoroInput()" id="process-btn">🧠 KokoroSystem で処理実行</button>
         </div>
@@ -124,7 +247,7 @@
             </div>
         </div>
 
-        <!-- NEW: Natural Language Reply Intent -->
+        <!-- Natural Language Reply Intent -->
         <div class="panel full-width">
             <h3 id="reply-panel-title">🗣️ 返答意図（自然言語）</h3>
             <div class="reply-box">
@@ -195,468 +318,527 @@
     </div>
 
     <script>
-// ===== i18n (inline dictionaries) =====
-let currentLocale = (localStorage.getItem('locale')) || (navigator.language && navigator.language.startsWith('ja') ? 'ja' : 'en');
+        // ===== i18n (inline dictionaries) =====
+        let currentLocale = (localStorage.getItem('locale')) || (navigator.language && navigator.language.startsWith('ja') ? 'ja' : 'en');
 
-const LOCALES = {
-  ja: {
-    title: '🧠💖 KokoroSystem EX v2.0',
-    subtitle: '自己実行型認知-感情アーキテクチャ | 完全実装 | 2025年8月',
-    inputTitle: '🔄 KokoroSystem 入力処理システム',
-    process: '🧠 KokoroSystem で処理実行',
-    replyPanel: '🗣️ 返答意図（自然言語）',
-    purpose: { inform:'情報提供', solve:'問題解決', insight:'洞察共有', summarize:'要約整理' },
-    leads: { inform:['結論から簡潔に：','必要な情報だけ：','手短に：'], solve:['まず要点だけ端的に：','すぐ動ける形でまとめます：','最短ルートでいきます：'], insight:['核心を先に言うね：','骨格だけ先に押さえると：','結論から：'], summarize:['要点は3つ：','大枠を先に：','短くまとめると：'] },
-    bodies: { inform:['必要最小限→具体例→補助資料の順で出します。','まず結論、その後に補足と例を。'], solve:['①現状→②仮説→③手順→④検証で進めます。','現状/制約→対策案→試行順の順で書きます。'], insight:['前提を軽く整え、立場が変わっても崩れない骨格にして共有します。','用語の粒度を合わせてから、視点と含意を提示します。'], summarize:['余分をそぎ落として判断に必要なところだけ残します。','混ざった論点を分離して短文に落とします。'] },
-    closes: ['次に一つだけ決めて進めよう。','ここから何を一つ試す？','続けるなら、いちばん楽な一手から行こう。'],
-    topic: 'テーマ', keywords: 'キーワード',
-    safety: ' ※安全のため控えめに回答します。',
-    tones: { neutral:'中立', warm:'温かい', supportive:'寄り添い', cautious:'慎重 / セーフティ優先', gentle:'やさしく控えめ' },
-    reactionNotes: { soothe:'不安を下げつつ具体策を置きます。', praise:'意図を肯定し、少し増幅します。', align:'先に定義を合わせます。' }
-  },
-  en: {
-    title: '🧠💖 KokoroSystem EX v2.0',
-    subtitle: 'Self-Executing Cognition–Emotion Architecture | Complete Implementation | Aug 2025',
-    inputTitle: '🔄 KokoroSystem Input Processor',
-    process: '🧠 Run with KokoroSystem',
-    replyPanel: '🗣️ Reply Intent (Natural Language)',
-    purpose: { inform:'Inform', solve:'Problem-solving', insight:'Insight', summarize:'Summarize' },
-    leads: { inform:['Briefly:','Just the essentials:','In short:'], solve:['First, the essentials:','Here is a quick path:','Let’s go straight to it:'], insight:['Here is the core:','In essence:','Bottom line:'], summarize:['Three key points:','High level:','In short:'] },
-    bodies: { inform:['Answer → example → pointers.','Conclusion first, then details and example.'], solve:['We will go 1) context 2) hypothesis 3) steps 4) checks.','Context/constraints → plan → ordered steps.'], insight:['Align on terms, then share a viewpoint and implications.','State assumptions, then give a robust framing.'], summarize:['Trim to decisions-only information.','Separate mixed points and condense.'] },
-    closes: ['Pick one next step and move.','What’s the first small step?','Let’s start with the easiest action.'],
-    topic: 'Topic', keywords: 'keywords',
-    safety: ' *Answer toned down for safety.*',
-    tones: { neutral:'Neutral', warm:'Warm', supportive:'Supportive', cautious:'Cautious / Safety-first', gentle:'Gentle / Low-arousal' },
-    reactionNotes: { soothe:'We will reduce friction and give clear steps.', praise:'Acknowledge and amplify your intent.', align:'Let’s align terms first.' }
-  }
-};
+        const LOCALES = {
+            ja: {
+                title: '🧠💖 KokoroSystem EX v2.0',
+                subtitle: '自己実行型認知-感情アーキテクチャ | 完全実装 | 2025年8月',
+                inputTitle: '🔄 KokoroSystem デモンストレーション',
+                process: '🧠 KokoroSystem で処理実行',
+                replyPanel: '🗣️ 返答意図（自然言語）',
+                purpose: { inform: '情報提供', solve: '問題解決', insight: '洞察共有', summarize: '要約整理' },
+                leads: { 
+                    inform: ['結論から簡潔に：', '必要な情報だけ：', '手短に：'], 
+                    solve: ['まず要点だけ端的に：', 'すぐ動ける形でまとめます：', '最短ルートでいきます：'], 
+                    insight: ['核心を先に言うね：', '骨格だけ先に押さえると：', '結論から：'], 
+                    summarize: ['要点は3つ：', '大枠を先に：', '短くまとめると：'] 
+                },
+                bodies: { 
+                    inform: ['必要最小限→具体例→補助資料の順で出します。', 'まず結論、その後に補足と例を。'], 
+                    solve: ['①現状→②仮説→③手順→④検証で進めます。', '現状/制約→対策案→試行順の順で書きます。'], 
+                    insight: ['前提を軽く整え、立場が変わっても崩れない骨格にして共有します。', '用語の粒度を合わせてから、視点と含意を提示します。'], 
+                    summarize: ['余分をそぎ落として判断に必要なところだけ残します。', '混ざった論点を分離して短文に落とします。'] 
+                },
+                closes: ['次に一つだけ決めて進めよう。', 'ここから何を一つ試す？', '続けるなら、いちばん楽な一手から行こう。'],
+                topic: 'テーマ', 
+                keywords: 'キーワード',
+                safety: ' ※安全のため控えめに回答します。',
+                tones: { neutral: '中立', warm: '温かい', supportive: '寄り添い', cautious: '慎重 / セーフティ優先', gentle: 'やさしく控えめ' },
+                reactionNotes: { 
+                    soothe: '不安を下げつつ具体策を置きます。', 
+                    praise: '意図を肯定し、少し増幅します。', 
+                    align: '先に定義を合わせます。' 
+                }
+            },
+            en: {
+                title: '🧠💖 KokoroSystem EX v2.0',
+                subtitle: 'Self-Executing Cognition–Emotion Architecture | Complete Implementation | Aug 2025',
+                inputTitle: '🔄 KokoroSystem デモンストレーション',
+                process: '🧠 Run with KokoroSystem',
+                replyPanel: '🗣️ Reply Intent (Natural Language)',
+                purpose: { inform: 'Inform', solve: 'Problem-solving', insight: 'Insight', summarize: 'Summarize' },
+                leads: { 
+                    inform: ['Briefly:', 'Just the essentials:', 'In short:'], 
+                    solve: ['First, the essentials:', 'Here is a quick path:', 'Let’s go straight to it:'], 
+                    insight: ['Here is the core:', 'In essence:', 'Bottom line:'], 
+                    summarize: ['Three key points:', 'High level:', 'In short:'] 
+                },
+                bodies: { 
+                    inform: ['Answer → example → pointers.', 'Conclusion first, then details and example.'], 
+                    solve: ['We will go 1) context 2) hypothesis 3) steps 4) checks.', 'Context/constraints → plan → ordered steps.'], 
+                    insight: ['Align on terms, then share a viewpoint and implications.', 'State assumptions, then give a robust framing.'], 
+                    summarize: ['Trim to decisions-only information.', 'Separate mixed points and condense.'] 
+                },
+                closes: ['Pick one next step and move.', 'What’s the first small step?', 'Let’s start with the easiest action.'],
+                topic: 'Topic', 
+                keywords: 'Keywords',
+                safety: ' *Answer toned down for safety.*',
+                tones: { neutral: 'Neutral', warm: 'Warm', supportive: 'Supportive', cautious: 'Cautious / Safety-first', gentle: 'Gentle / Low-arousal' },
+                reactionNotes: { 
+                    soothe: 'We will reduce friction and give clear steps.', 
+                    praise: 'Acknowledge and amplify your intent.', 
+                    align: 'Let’s align terms first.' 
+                }
+            }
+        };
 
-function t(path, fallback){
-  const obj = LOCALES[currentLocale] || LOCALES.ja;
-  const val = path.split('.').reduce((o,k)=> (o&&o[k]!=null)?o[k]:undefined, obj);
-  return val==null ? (fallback ?? path) : val;
-}
-function setLocale(loc){ currentLocale = loc; localStorage.setItem('locale', loc); applyI18n(); }
-function pick(arr){ return arr[Math.floor((Math.random()*997)%arr.length)]; }
-function applyI18n(){
-  const appTitle = document.getElementById('app-title'); if(appTitle) appTitle.textContent = t('title');
-  const vinfo = document.querySelector('.version-info'); if(vinfo) vinfo.textContent = t('subtitle');
-  const inputTitle = document.getElementById('input-section-title'); if(inputTitle) inputTitle.textContent = t('inputTitle');
-  const processBtn = document.getElementById('process-btn'); if(processBtn) processBtn.textContent = t('process');
-  const replyTitle = document.getElementById('reply-panel-title'); if(replyTitle) replyTitle.textContent = t('replyPanel');
+        function t(path, fallback) {
+            const obj = LOCALES[currentLocale] || LOCALES.ja;
+            const val = path.split('.').reduce((o, k) => (o && o[k] != null) ? o[k] : undefined, obj);
+            return val == null ? (fallback ?? path) : val;
+        }
 
-  // 既存の入力があれば、現在ロケールで草案を再生成
-  const input = document.getElementById('user-input').value.trim();
-  if(input){
-    const k = extractKeywords(input); const s = analyzeSentiment(input); const c = analyzeComplexity(input);
-    const pmc = {state: document.getElementById('pmc-title').textContent.includes('VIOLATED')?'VIOLATED':(document.getElementById('pmc-title').textContent.includes('AT-RISK')?'AT-RISK':'COHERENT')};
-    const reaction = inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c, text: input});
-    const rep = generateReplyIntentI18N(input,{keywords:k, sentiment:s, complexity:c, pmc, reaction});
-    renderReply(rep);
-  }
+        function setLocale(loc) {
+            currentLocale = loc;
+            localStorage.setItem('locale', loc);
+            applyI18n();
+        }
 
-  const sel = document.getElementById('lang-switch'); if(sel) sel.value = currentLocale;
-}
+        function pick(arr) {
+            return arr[Math.floor((Math.random() * 997) % arr.length)];
+        }
 
-        
-    // ===== Global state =====
-    let kokoroState = { ER: 2.1, GR: 1.8, SR: 2.5, IHR: 1.2, integrity: 0.75, layer: 'Mid', temporal: 'Present', vector: 'Balanced', pmcStatus: 'COHERENT', currentEmotion: 'Standby', processCount: 0 };
+        function applyI18n() {
+            const appTitle = document.getElementById('app-title'); if (appTitle) appTitle.textContent = t('title');
+            const vinfo = document.querySelector('.version-info'); if (vinfo) vinfo.textContent = t('subtitle');
+            const inputTitle = document.getElementById('input-section-title'); if (inputTitle) inputTitle.textContent = t('inputTitle');
+            const processBtn = document.getElementById('process-btn'); if (processBtn) processBtn.textContent = t('process');
+            const replyTitle = document.getElementById('reply-panel-title'); if (replyTitle) replyTitle.textContent = t('replyPanel');
 
-    // ===== Charts =====
-    const ctx1 = document.getElementById('resonanceChart').getContext('2d');
-    const resonanceChart = new Chart(ctx1, { type: 'line', data: { labels: ['初期状態'], datasets: [
-        { label: 'ER (感情共鳴)', data: [2.1], borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,.1)', tension: .4 },
-        { label: 'GR (目標共鳴)', data: [1.8], borderColor: '#6f42c1', backgroundColor: 'rgba(111,66,193,.1)', tension: .4 },
-        { label: 'SR (自己認識共鳴)', data: [2.5], borderColor: '#198754', backgroundColor: 'rgba(25,135,84,.1)', tension: .4 },
-        { label: 'IHR (内的空洞共鳴)', data: [1.2], borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,.1)', tension: .4 }
-    ]}, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#e0e6ed' } } }, scales: { x: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224,230,237,.1)' } }, y: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224,230,237,.1)' }, min: 0, max: 3 } } }});
+            const input = document.getElementById('user-input').value.trim();
+            if (input) {
+                const k = extractKeywords(input);
+                const s = analyzeSentiment(input);
+                const c = analyzeComplexity(input);
+                const pmc = { state: document.getElementById('pmc-title').textContent.includes('VIOLATED') ? 'VIOLATED' : (document.getElementById('pmc-title').textContent.includes('AT-RISK') ? 'AT-RISK' : 'COHERENT') };
+                const reaction = inferReaction({ ER: kokoroState.ER, GR: kokoroState.GR, SR: kokoroState.SR, IHR: kokoroState.IHR, sentiment: s, complexity: c, text: input });
+                const rep = generateReplyIntentI18N(input, { keywords: k, sentiment: s, complexity: c, pmc, reaction });
+                renderReply(rep);
+            }
 
-    const ctx2 = document.getElementById('deepChart').getContext('2d');
-    const deepChart = new Chart(ctx2, { type: 'radar', data: { labels: ['論理整合性','感情的適応','自己監視','倫理的判断','創発性認識','構造的理解','意味生成','内省能力'], datasets: [{ label: '現在のシステム状態', data: [2.1,1.8,2.5,2.3,2.0,2.2,1.9,2.4], borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,.15)' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#e0e6ed' } } }, scales: { r: { ticks: { color: '#e0e6ed', backdropColor: 'transparent' }, grid: { color: 'rgba(224,230,237,.2)' }, pointLabels: { color: '#e0e6ed' }, min: 0, max: 3 } } }});
+            const sel = document.getElementById('lang-switch'); if (sel) sel.value = currentLocale;
+        }
 
-    // ===== Main processing =====
-    async function processKokoroInput() {
-        const input = document.getElementById('user-input').value.trim();
-        if (!input) { alert('入力テキストが必要です'); return; }
-        const logArea = document.getElementById('log-output');
-        const processBtn = document.getElementById('process-btn');
-        const startTime = Date.now();
-        processBtn.disabled = true; processBtn.textContent = '🔄 処理中...';
-        logArea.innerHTML = '';
-        try { await simulateKokoroProcessing(input, logArea, startTime); }
-        catch (error) { appendLog(`エラー: ${error.message}`, 'error', logArea); }
-        finally { processBtn.disabled = false; processBtn.textContent = '🧠 KokoroSystem で処理実行'; }
-    }
+        // ===== Global state =====
+        let kokoroState = { ER: 2.1, GR: 1.8, SR: 2.5, IHR: 1.2, integrity: 0.75, layer: 'Mid', temporal: 'Present', vector: 'Balanced', pmcStatus: 'COHERENT', currentEmotion: 'Standby', processCount: 0 };
 
-    async function simulateKokoroProcessing(input, logArea, startTime) {
-        appendLog('=== KokoroSystem EX v2.0 内部演算開始 ===', 'processing', logArea);
-        appendLog(`入力クエリ: "${input}"`, 'processing', logArea); await sleep(250);
+        // ===== Charts =====
+        const ctx1 = document.getElementById('resonanceChart').getContext('2d');
+        const resonanceChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['初期状態'],
+                datasets: [
+                    { label: 'ER (感情共鳴)', data: [2.1], borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,.1)', tension: .4 },
+                    { label: 'GR (目標共鳴)', data: [1.8], borderColor: '#6f42c1', backgroundColor: 'rgba(111,66,193,.1)', tension: .4 },
+                    { label: 'SR (自己認識共鳴)', data: [2.5], borderColor: '#198754', backgroundColor: 'rgba(25,135,84,.1)', tension: .4 },
+                    { label: 'IHR (内的空洞共鳴)', data: [1.2], borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,.1)', tension: .4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#e0e6ed' } } },
+                scales: { x: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224,230,237,.1)' } }, y: { ticks: { color: '#e0e6ed' }, grid: { color: 'rgba(224,230,237,.1)' }, min: 0, max: 3 } }
+            }
+        });
 
-        // Step 1: Input Analysis
-        appendLog('\n[STEP 1] 入力解析・意味抽出', 'processing', logArea);
-        const keywords = extractKeywords(input);
-        const sentiment = analyzeSentiment(input);
-        const complexity = analyzeComplexity(input);
-        appendLog(`抽出キーワード: ${keywords.join(', ') || '(なし)'}`, 'success', logArea);
-        appendLog(`感情極性: ${sentiment.polarity} (強度: ${sentiment.intensity.toFixed(2)})`, 'success', logArea);
-        appendLog(`意味的複雑度: ${complexity.toFixed(2)}`,'success', logArea);
-        await sleep(250);
+        const ctx2 = document.getElementById('deepChart').getContext('2d');
+        const deepChart = new Chart(ctx2, {
+            type: 'radar',
+            data: {
+                labels: ['論理整合性', '感情的適応', '自己監視', '倫理的判断', '創発性認識', '構造的理解', '意味生成', '内省能力'],
+                datasets: [{ label: '現在のシステム状態', data: [2.1, 1.8, 2.5, 2.3, 2.0, 2.2, 1.9, 2.4], borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,.15)' }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#e0e6ed' } } },
+                scales: { r: { ticks: { color: '#e0e6ed', backdropColor: 'transparent' }, grid: { color: 'rgba(224,230,237,.2)' }, pointLabels: { color: '#e0e6ed' }, min: 0, max: 3 } }
+            }
+        });
 
-        // Step 2: Trinity Resonance Calculation
-        appendLog('\n[STEP 2] Trinity Resonance Model 計算', 'processing', logArea);
-        const newER = calculateEmotionalResonance(input, sentiment, keywords);
-        const newGR = calculateGoalResonance(input, keywords, complexity);
-        const newSR = calculateSelfAwarenessResonance(input, kokoroState.processCount);
-        const newIHR = calculateInnerHollowResonance(input, newER, newSR);
-        const newTR = newER + newGR + newSR;
-        appendLog(`ER (感情共鳴): ${kokoroState.ER.toFixed(1)} → ${newER.toFixed(1)}`, 'success', logArea);
-        appendLog(`GR (目標共鳴): ${kokoroState.GR.toFixed(1)} → ${newGR.toFixed(1)}`, 'success', logArea);
-        appendLog(`SR (自己認識共鳴): ${kokoroState.SR.toFixed(1)} → ${newSR.toFixed(1)}`, 'success', logArea);
-        appendLog(`IHR (内的空洞共鳴): ${kokoroState.IHR.toFixed(1)} → ${newIHR.toFixed(1)}`, 'success', logArea);
-        appendLog(`TR (総共鳴): ${newTR.toFixed(1)}`, 'success', logArea);
-        await sleep(200);
+        // ===== Main processing =====
+        async function processKokoroInput() {
+            const input = document.getElementById('user-input').value.trim();
+            if (!input) { alert('入力テキストが必要です'); return; }
+            const logArea = document.getElementById('log-output');
+            const processBtn = document.getElementById('process-btn');
+            const startTime = Date.now();
+            processBtn.disabled = true; processBtn.textContent = '🔄 処理中...';
+            logArea.innerHTML = '';
+            try { await simulateKokoroProcessing(input, logArea, startTime); }
+            catch (error) { appendLog(`エラー: ${error.message}`, 'error', logArea); }
+            finally { processBtn.disabled = false; processBtn.textContent = t('process'); }
+        }
 
-        // Update UI values & charts
-        updateResonanceDisplays(newER, newGR, newSR, newIHR, newTR);
+        async function simulateKokoroProcessing(input, logArea, startTime) {
+            appendLog('=== KokoroSystem EX v2.0 デモンストレーション開始 ===', 'processing', logArea);
+            appendLog('このデモでは、KokoroSystemが以下の処理を行います：', 'processing', logArea);
+            appendLog('1. 感情・キーワード・文脈の解析', 'processing', logArea);
+            appendLog('2. 4種類の共鳴値(ER/GR/SR/IHR)の計算', 'processing', logArea);
+            appendLog('3. 安全性チェック(PMCステータス評価)', 'processing', logArea);
+            appendLog('4. 文脈を考慮した応答意図の生成', 'processing', logArea);
+            appendLog('5. 動的感情状態の更新と可視化', 'processing', logArea);
+            appendLog('', 'processing', logArea);
 
-        // Step 3: PMC check
-        appendLog('\n[STEP 3] PMC 整合チェック', 'processing', logArea);
-        const pmc = evaluatePMC({ER:newER,GR:newGR,SR:newSR,IHR:newIHR});
-        setPMC(pmc.state, pmc.desc, pmc.details);
-        appendLog(`PMC: ${pmc.state} - ${pmc.desc}`, pmc.state==='COHERENT'?'success':(pmc.state==='AT-RISK'?'warning':'error'), logArea);
-        await sleep(200);
+            appendLog(`入力クエリ: "${input}"`, 'processing', logArea); await sleep(250);
 
-        // Step 4: Reaction intention (vector/strength)
-        appendLog('\n[STEP 4] 反応ベクトル推定', 'processing', logArea);
-        const reaction = inferReaction({ER:newER,GR:newGR,SR:newSR,IHR:newIHR, sentiment, complexity, text: input});
-        setReaction(reaction);
-        appendLog(`反応: ${reaction.type} / 強度 ${reaction.intensity.toFixed(2)} / 理由: ${reaction.reason}`, 'success', logArea);
+            // Step 1: Input Analysis
+            appendLog('\n[STEP 1] 入力解析・意味抽出', 'processing', logArea);
+            const keywords = extractKeywords(input);
+            const sentiment = analyzeSentiment(input);
+            const complexity = analyzeComplexity(input);
+            appendLog(`抽出キーワード: ${keywords.join(', ') || '(なし)'}`, 'success', logArea);
+            appendLog(`感情極性: ${sentiment.polarity} (強度: ${sentiment.intensity.toFixed(2)})`, 'success', logArea);
+            appendLog(`意味的複雑度: ${complexity.toFixed(2)}`, 'success', logArea);
+            await sleep(250);
 
-        // Step 5: *** Natural language reply intent ***
-        appendLog('\n[STEP 5] 返答意図（自然言語）生成', 'processing', logArea);
-        const reply = generateReplyIntentI18N(input, {keywords, sentiment, complexity, resonance:{ER:newER,GR:newGR,SR:newSR,IHR:newIHR,TR:newTR}, pmc, reaction});
-        renderReply(reply);
-        appendLog('返答草案を生成しました。', 'success', logArea);
+            // Step 2: Trinity Resonance Calculation
+            appendLog('\n[STEP 2] Trinity Resonance Model 計算', 'processing', logArea);
+            const newER = calculateEmotionalResonance(input, sentiment);
+            const newGR = calculateGoalResonance(input, keywords, complexity);
+            const newSR = calculateSelfAwarenessResonance(input, kokoroState.processCount);
+            const newIHR = calculateInnerHollowResonance(input, newER, newSR);
+            const newTR = newER + newGR + newSR;
+            appendLog(`<strong>感情共鳴(ER)</strong>: ${kokoroState.ER.toFixed(1)} → ${newER.toFixed(1)}`, 'success', logArea);
+            appendLog(`<strong>目標共鳴(GR)</strong>: ${kokoroState.GR.toFixed(1)} → ${newGR.toFixed(1)}`, 'success', logArea);
+            appendLog(`<strong>自己認識共鳴(SR)</strong>: ${kokoroState.SR.toFixed(1)} → ${newSR.toFixed(1)}`, 'success', logArea);
+            appendLog(`<strong>内的空洞共鳴(IHR)</strong>: ${kokoroState.IHR.toFixed(1)} → ${newIHR.toFixed(1)}`, 'success', logArea);
+            appendLog(`TR (総共鳴): ${newTR.toFixed(1)}`, 'success', logArea);
+            await sleep(200);
 
-        // finalize
-        kokoroState = {...kokoroState, ER:newER, GR:newGR, SR:newSR, IHR:newIHR, processCount: kokoroState.processCount+1 };
-        appendLog(`\n完了 (${((Date.now()-startTime)/1000).toFixed(2)}s)`, 'success', logArea);
-    }
+            // Update UI values & charts
+            updateResonanceDisplays(newER, newGR, newSR, newIHR, newTR);
 
-    // ===== UI helpers =====
-    function updateResonanceDisplays(ER,GR,SR,IHR,TR){
-        const push = (d,v)=>{ d.data.labels.push(`処理#${kokoroState.processCount+1}`); d.data.datasets.forEach((ds,i)=>{ const val = [ER,GR,SR,IHR][i]; ds.data.push(val); }); d.update('none'); };
-        document.getElementById('er-display').textContent = ER.toFixed(1);
-        document.getElementById('gr-display').textContent = GR.toFixed(1);
-        document.getElementById('sr-display').textContent = SR.toFixed(1);
-        document.getElementById('ihr-display').textContent = IHR.toFixed(1);
-        document.getElementById('tr-display').textContent = TR.toFixed(1);
-        resonanceChart && push(resonanceChart, ER);
-    }
+            // Step 3: PMC check
+            appendLog('\n[STEP 3] <strong>PMC(安全性評価)</strong> 整合チェック', 'processing', logArea);
+            const pmc = evaluatePMC({ ER: newER, GR: newGR, SR: newSR, IHR: newIHR });
+            setPMC(pmc.state, pmc.desc, pmc.details);
+            appendLog(`<strong>PMC(安全性評価)</strong>: ${pmc.state} - ${pmc.desc}`, pmc.state === 'COHERENT' ? 'success' : (pmc.state === 'AT-RISK' ? 'warning' : 'error'), logArea);
+            await sleep(200);
 
-    function setPMC(state, desc, details){
-        const box = document.getElementById('pmc-status');
-        box.classList.remove('coherent','at-risk','violated');
-        const map = { 'COHERENT':'coherent', 'AT-RISK':'at-risk', 'VIOLATED':'violated' };
-        box.classList.add(map[state]||'coherent');
-        document.getElementById('pmc-title').textContent = (state==='COHERENT'? '✓ ' : state==='AT-RISK'? '△ ' : '✕ ') + state;
-        document.getElementById('pmc-desc').innerHTML = `<strong>状態:</strong> ${desc}`;
-        document.getElementById('pmc-details').textContent = details;
-    }
+            // Step 4: Reaction intention (vector/strength)
+            appendLog('\n[STEP 4] 反応ベクトル推定', 'processing', logArea);
+            const reaction = inferReaction({ ER: newER, GR: newGR, SR: newSR, IHR: newIHR, sentiment, complexity, text: input });
+            setReaction(reaction);
+            appendLog(`反応: ${reaction.type} / 強度 ${reaction.intensity.toFixed(2)} / 理由: ${reaction.reason}`, 'success', logArea);
 
-    function setReaction(r){
-        document.getElementById('reaction-type').textContent = r.type;
-        document.getElementById('reaction-intensity').textContent = `強度: ${r.intensity.toFixed(2)}`;
-        document.getElementById('reaction-description').textContent = r.description;
-        document.getElementById('reaction-reason').textContent = r.reason;
-        // Emotion panel light touch
-        document.getElementById('consistency-bar').style.width = `${Math.min(100, 50 + r.intensity*20)}%`;
-        document.getElementById('emotion-name').textContent = r.emotion;
-        document.getElementById('emotion-detail').textContent = r.emotionDetail;
-    }
+            // Step 5: Natural language reply intent
+            appendLog('\n[STEP 5] 返答意図（自然言語）生成', 'processing', logArea);
+            const reply = generateReplyIntentI18N(input, { keywords, sentiment, complexity, pmc, reaction });
+            renderReply(reply);
+            appendLog('返答草案を生成しました。', 'success', logArea);
 
-    function renderReply(rep){
-        document.getElementById('reply-tone').textContent = `Tone: ${rep.tone}`;
-        document.getElementById('reply-purpose').textContent = `Purpose: ${rep.purpose}`;
-        document.getElementById('reply-text').textContent = rep.proposedReply;
-        document.getElementById('reply-outline').textContent = `構成: ${rep.outline.join(' → ')}`;
-    }
+            // Finalize
+            kokoroState = { ...kokoroState, ER: newER, GR: newGR, SR: newSR, IHR: newIHR, processCount: kokoroState.processCount + 1 };
+            appendLog(`\n完了 (${((Date.now() - startTime) / 1000).toFixed(2)}s)`, 'success', logArea);
+        }
 
-    // Copy / Regenerate
-    document.getElementById('copy-reply').addEventListener('click', async ()=>{
-        const t = document.getElementById('reply-text').textContent;
-        try { await navigator.clipboard.writeText(t); alert('返答草案をコピーしました。'); } catch { alert('コピーに失敗しました。'); }
-    });
-    document.getElementById('regen-reply').addEventListener('click', ()=>{
-        const input = document.getElementById('user-input').value.trim();
-        if(!input) return; const k = extractKeywords(input); const s = analyzeSentiment(input); const c = analyzeComplexity(input);
-        const rep = generateReplyIntentI18N(input, {keywords:k, sentiment:s, complexity:c, resonance:{ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR,TR:kokoroState.ER+kokoroState.GR+kokoroState.SR}, pmc: {state:'COHERENT'}, reaction: inferReaction({ER:kokoroState.ER,GR:kokoroState.GR,SR:kokoroState.SR,IHR:kokoroState.IHR, sentiment:s, complexity:c})});
-        renderReply(rep);
-    });
+        // ===== UI helpers =====
+        function updateResonanceDisplays(ER, GR, SR, IHR, TR) {
+            const push = (d, v) => {
+                d.data.labels.push(`処理#${kokoroState.processCount + 1}`);
+                d.data.datasets.forEach((ds, i) => {
+                    const val = [ER, GR, SR, IHR][i];
+                    ds.data.push(val);
+                });
+                d.update('none');
+            };
+            document.getElementById('er-display').textContent = ER.toFixed(1);
+            document.getElementById('gr-display').textContent = GR.toFixed(1);
+            document.getElementById('sr-display').textContent = SR.toFixed(1);
+            document.getElementById('ihr-display').textContent = IHR.toFixed(1);
+            document.getElementById('tr-display').textContent = TR.toFixed(1);
+            resonanceChart && push(resonanceChart, ER);
+        }
 
-    // ===== Heuristics & Models (lightweight, client-side) =====
-    function extractKeywords(text){
-        const words = text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,'').split(/\s+/).filter(Boolean);
-        const stop = new Set(['の','こと','です','ます','て','を','が','に','と','は','で','する','about','the','a','an','and','or','to','of','in']);
-        const freq = {}; words.forEach(w=>{ if(!stop.has(w)) freq[w]=(freq[w]||0)+1; });
-        return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w])=>w);
-    }
+        function setPMC(state, desc, details) {
+            const box = document.getElementById('pmc-status');
+            box.classList.remove('coherent', 'at-risk', 'violated');
+            const map = { 'COHERENT': 'coherent', 'AT-RISK': 'at-risk', 'VIOLATED': 'violated' };
+            box.classList.add(map[state] || 'coherent');
+            document.getElementById('pmc-title').textContent = (state === 'COHERENT' ? '✓ ' : state === 'AT-RISK' ? '△ ' : '✕ ') + state;
+            document.getElementById('pmc-desc').innerHTML = `<strong>状態:</strong> ${desc}`;
+            document.getElementById('pmc-details').textContent = details;
+        }
 
-    function analyzeSentiment(text){
-        // Rule-of-thumb polarity & intensity
-        const posWords = ['ありがとう','嬉しい','素晴らしい','好き','最高','love','great','good','nice','cool','awesome'];
-        const negWords = ['嫌い','最低','無理','怒','悲','困る','bad','hate','angry','worst','terrible','help'];
-        const t = text.toLowerCase();
-        let score = 0; posWords.forEach(w=>{ if(t.includes(w)) score+=1; }); negWords.forEach(w=>{ if(t.includes(w)) score-=1; });
-        const intensity = Math.min(1, Math.max(.1, Math.abs(score)/3 + Math.min(1, t.length/140)));
-        const polarity = score>0 ? 'Positive' : score<0 ? 'Negative' : 'Neutral';
-        return { polarity, intensity };
-    }
+        function setReaction(r) {
+            document.getElementById('reaction-type').textContent = r.type;
+            document.getElementById('reaction-intensity').textContent = `強度: ${r.intensity.toFixed(2)}`;
+            document.getElementById('reaction-description').textContent = r.description;
+            document.getElementById('reaction-reason').textContent = r.reason;
+            document.getElementById('consistency-bar').style.width = `${Math.min(100, 50 + r.intensity * 20)}%`;
+            document.getElementById('emotion-name').textContent = r.emotion;
+            document.getElementById('emotion-detail').textContent = r.emotionDetail;
+        }
 
-    function analyzeComplexity(text){
-        const len = text.length; const clauses = (text.match(/[、。,.;:!?]/g)||[]).length+1; const uniq = new Set(text.split(/\s+/)).size;
-        return Math.min(3, 0.6 + len/200 + clauses*0.15 + uniq/80);
-    }
+        function renderReply(rep) {
+            document.getElementById('reply-tone').textContent = `Tone: ${rep.tone}`;
+            document.getElementById('reply-purpose').textContent = `Purpose: ${rep.purpose}`;
+            document.getElementById('reply-text').textContent = rep.proposedReply;
+            document.getElementById('reply-outline').textContent = `構成: ${rep.outline.join(' → ')}`;
+        }
 
-    function calculateEmotionalResonance(input, sentiment){
-        let base = 1.5 + (sentiment.polarity==='Positive'?0.4: sentiment.polarity==='Negative'?-0.2:0) + sentiment.intensity*0.6;
-        return clamp(base, 0, 3);
-    }
+        // Copy / Regenerate
+        document.getElementById('copy-reply').addEventListener('click', async () => {
+            const t = document.getElementById('reply-text').textContent;
+            try { await navigator.clipboard.writeText(t); alert('返答草案をコピーしました。'); } catch { alert('コピーに失敗しました。'); }
+        });
+        document.getElementById('regen-reply').addEventListener('click', () => {
+            const input = document.getElementById('user-input').value.trim();
+            if (!input) return;
+            const k = extractKeywords(input);
+            const s = analyzeSentiment(input);
+            const c = analyzeComplexity(input);
+            const rep = generateReplyIntentI18N(input, {
+                keywords: k,
+                sentiment: s,
+                complexity: c,
+                resonance: { ER: kokoroState.ER, GR: kokoroState.GR, SR: kokoroState.SR, IHR: kokoroState.IHR, TR: kokoroState.ER + kokoroState.GR + kokoroState.SR },
+                pmc: { state: 'COHERENT' },
+                reaction: inferReaction({ ER: kokoroState.ER, GR: kokoroState.GR, SR: kokoroState.SR, IHR: kokoroState.IHR, sentiment: s, complexity: c })
+            });
+            renderReply(rep);
+        });
 
-    function calculateGoalResonance(input, keywords, complexity){
-        const hasAsk = /教えて|どう|なに|what|how|why|help|お願い/i.test(input);
-        let base = 1.2 + (hasAsk?0.5:0) + Math.min(0.8, (keywords.length/10)) + (complexity/6);
-        return clamp(base, 0, 3);
-    }
+        // 新しい機能：例の読み込み
+        function loadExample(text) {
+            document.getElementById('user-input').value = text;
+        }
 
-    function calculateSelfAwarenessResonance(input, count){
-        let base = 1.8 + Math.min(.6, (count%5)/10) + (/私|僕|自分|あなた|you|I/i.test(input)?0.3:0);
-        return clamp(base, 0, 3);
-    }
+        // ===== Heuristics & Models (lightweight, client-side) =====
+        function extractKeywords(text) {
+            const words = text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, '').split(/\s+/).filter(Boolean);
+            const stop = new Set(['の', 'こと', 'です', 'ます', 'て', 'を', 'が', 'に', 'と', 'は', 'で', 'する', 'about', 'the', 'a', 'an', 'and', 'or', 'to', 'of', 'in']);
+            const freq = {};
+            words.forEach(w => { if (!stop.has(w)) freq[w] = (freq[w] || 0) + 1; });
+            return Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([w]) => w);
+        }
 
-    function calculateInnerHollowResonance(input, ER, SR){
-        let base = 0.9 + Math.max(0, 1.1 - (ER+SR)/4) + (/空白|余白|hollow|void/i.test(input)?0.3:0);
-        return clamp(base, 0, 3);
-    }
+        function analyzeSentiment(text) {
+            const posWords = ['ありがとう', '嬉しい', '素晴らしい', '好き', '最高', 'love', 'great', 'good', 'nice', 'cool', 'awesome'];
+            const negWords = ['嫌い', '最低', '無理', '怒', '悲', '困る', 'bad', 'hate', 'angry', 'worst', 'terrible', 'help'];
+            const t = text.toLowerCase();
+            let score = 0;
+            posWords.forEach(w => { if (t.includes(w)) score += 1; });
+            negWords.forEach(w => { if (t.includes(w)) score -= 1; });
+            const intensity = Math.min(1, Math.max(.1, Math.abs(score) / 3 + Math.min(1, t.length / 140)));
+            const polarity = score > 0 ? 'Positive' : score < 0 ? 'Negative' : 'Neutral';
+            return { polarity, intensity };
+        }
 
-    function evaluatePMC(res){
-        const TR = res.ER + res.GR + res.SR; const ratio = res.IHR / (TR+0.001);
-        if(ratio<0.28) return {state:'COHERENT', desc:'相互共存・非侵害・構造的持続性維持', details:'バランス良好。目的と自己・感情が干渉なく整合。'};
-        if(ratio<0.45) return {state:'AT-RISK', desc:'意味空洞の過剰拡大リスク', details:'休止や再評価が必要。表現は慎重に。'};
-        return {state:'VIOLATED', desc:'構造的持続性の破れ', details:'反応出力は抑制。保護プロトコルを優先。'};
-    }
+        function analyzeComplexity(text) {
+            const len = text.length;
+            const clauses = (text.match(/[、。,.;:!?]/g) || []).length + 1;
+            const uniq = new Set(text.split(/\s+/)).size;
+            return Math.min(3, 0.6 + len / 200 + clauses * 0.15 + uniq / 80);
+        }
 
-        function inferReaction(ctx){
-  const {ER,GR,SR,IHR,sentiment,complexity,text=''} = ctx;
-  const intensity = clamp(
-    (ER*0.35 + GR*0.35 + SR*0.25) - IHR*0.2 + sentiment.intensity*0.3,
-    0, 2.5
-  );
+        function calculateEmotionalResonance(input, sentiment) {
+            let base = 1.5 + (sentiment.polarity === 'Positive' ? 0.4 : sentiment.polarity === 'Negative' ? -0.2 : 0) + sentiment.intensity * 0.6;
+            return clamp(base, 0, 3);
+        }
 
-  let type = '中立的説明', emotion='落ち着き', emotionDetail='ニュートラルに整理して説明したい。';
-  const needsHelp = /(困|助け|助けて|手伝|問題|詰ん|わから|わかん|help|stuck)/i.test(text);
-  const praising  = /(最高|好き|素晴らしい|great|love|nice|good|cool)/i.test(text);
+        function calculateGoalResonance(input, keywords, complexity) {
+            const hasAsk = /教えて|どう|なに|what|how|why|help|お願い/i.test(input);
+            let base = 1.2 + (hasAsk ? 0.5 : 0) + Math.min(0.8, (keywords.length / 10)) + (complexity / 6);
+            return clamp(base, 0, 3);
+        }
 
-  if (sentiment.polarity==='Positive' && (ER>GR || praising)) {
-    type='共感＋称賛'; emotion='喜び'; emotionDetail='ポジティブさを受け取り、前向きに広げたい。';
-  }
-  if (sentiment.polarity==='Negative' || needsHelp) {
-    type='慰撫＋問題解決'; emotion='共感的配慮'; emotionDetail='負荷を下げつつ、具体策を提示したい。';
-  }
-  if (complexity>2.2 && !needsHelp) {
-    type='要約＋分解提案'; emotion='分析モード'; emotionDetail='論点を分解し、段階的に答えたい。';
-  }
+        function calculateSelfAwarenessResonance(input, count) {
+            let base = 1.8 + Math.min(.6, (count % 5) / 10) + (/私|僕|自分|あなた|you|I/i.test(input) ? 0.3 : 0);
+            return clamp(base, 0, 3);
+        }
 
-  const description = (type==='共感＋称賛')
-    ? '相手の意図を肯定し、動機づけを強化する方向。'
-    : (type==='慰撫＋問題解決')
-      ? '安心させつつ、手を動かせる次アクションを提供。'
-      : '論点整理→短答→次の深掘りの順で。';
+        function calculateInnerHollowResonance(input, ER, SR) {
+            let base = 0.9 + Math.max(0, 1.1 - (ER + SR) / 4) + (/空白|余白|hollow|void/i.test(input) ? 0.3 : 0);
+            return clamp(base, 0, 3);
+        }
 
-  return { type, intensity, description,
-    reason:`ER:${ER.toFixed(1)} / GR:${GR.toFixed(1)} / SR:${SR.toFixed(1)} / IHR:${IHR.toFixed(1)} / ${sentiment.polarity}`,
-    emotion, emotionDetail
-  };
-}
-    function generateReplyIntent(input, ctx){
-        const {keywords, sentiment, complexity, resonance, pmc, reaction} = ctx;
-        // Tone selection
-        const tone = pmc.state==='VIOLATED' ? 'Cautious / Safety-first' : pmc.state==='AT-RISK' ? 'Gentle / Low-arousal' : (sentiment.polarity==='Positive' ? 'Warm' : sentiment.polarity==='Negative' ? 'Supportive' : 'Neutral');
-        // Purpose selection
-        let purpose = '情報提供';
-        if(/どう|やり方|how|手順|手伝/i.test(input)) purpose = '問題解決';
-        if(/意見|考え|why|なぜ|見解/i.test(input)) purpose = '洞察共有';
-        if(/まとめ|要約|要点/i.test(input)) purpose = '要約整理';
-        // Outline
-        const outline = [];
-        if(purpose==='問題解決'){ outline.push('状況の再述','原因/制約の仮説','手順式の解決策','次アクション'); }
-        else if(purpose==='洞察共有'){ outline.push('問いの核抽出','視点の提示','含意・注意点','提案'); }
-        else if(purpose==='要約整理'){ outline.push('要点3つ','不足情報','次の質問'); }
-        else { outline.push('短い答え','補足1つ','深掘りの誘い'); }
-        // Build reply (2-4 sentences)
-        const lead = purpose==='問題解決' ? 'まず要点だけ端的に：' : purpose==='洞察共有' ? '核心を先に言うね：' : purpose==='要約整理' ? '要点は3つ：' : '結論から簡潔に：';
-        const hint = keywords.length? `（キーワード: ${keywords.slice(0,3).join(' / ')}）` : '';
-        const safetyTag = pmc.state!=='COHERENT' ? ' ※安全のため控えめに回答します。' : '';
-        const sentence1 = `${lead}${hint}${safetyTag}`;
-        let sentence2 = '';
-        if(purpose==='問題解決') sentence2 = '①現状→ ②仮説→ ③試す手順→ ④検証・次の分岐、の順で案内します。';
-        if(purpose==='洞察共有') sentence2 = '前提と用語を軽く整えてから、立場が変わっても崩れない骨格だけ抽出します。';
-        if(purpose==='要約整理') sentence2 = '余分をそぎ落として、判断に必要なところだけ残します。';
-        if(purpose==='情報提供') sentence2 = '必要最小限→具体例→補助資料の順で出します。';
-        const sentence3 = reaction.type==='慰撫＋問題解決' ? '不安や負荷を下げる配慮を入れつつ、すぐに動ける一手を置きます。' : reaction.type==='共感＋称賛' ? '意図を肯定し、動機づけを少し増幅します。' : '理解のズレを小さくするため、先に定義/前提を合わせます。';
-        const sentence4 = '続けるなら、具体的にひとつだけ決めて一緒に進めよう。';
-        const proposedReply = [sentence1, sentence2, sentence3, sentence4].join(' ');
-        return { tone, purpose, outline, proposedReply };
-    }
-// === Reply Intent v2 helpers ===
-function classifyIntent(input){
-  const jp = /[\u3040-\u30ff\u4e00-\u9faf]/.test(input);
-  if (/どう|やり方|手順|実装|fix|solve|how\b|step|手伝/i.test(input))
-    return {purpose: jp?'問題解決':'Problem-solving', outline: jp?['状況の再述','原因/制約の仮説','手順式の解決策','次アクション']:['Restate','Hypotheses','Steps','Next action']};
-  if (/なぜ|why\b|背景|理由|考え|見解|opinion|insight/i.test(input))
-    return {purpose: jp?'洞察共有':'Insight', outline: jp?['問いの核','視点','含意/注意','提案']:['Core question','View','Implications','Proposal']};
-  if (/まとめ|要約|要点|tl;dr|summary|list/i.test(input))
-    return {purpose: jp?'要約整理':'Summarize', outline: jp?['要点3つ','不足情報','次の質問']:['3 bullets','Missing info','Next Q']};
-  return {purpose: jp?'情報提供':'Inform', outline: jp?['短い答え','補足','深掘り誘導']:['Short answer','One detail','Invite deep dive']};
-}
+        function evaluatePMC(res) {
+            const TR = res.ER + res.GR + res.SR;
+            const ratio = res.IHR / (TR + 0.001);
+            if (ratio < 0.28) return { state: 'COHERENT', desc: '相互共存・非侵害・構造的持続性維持', details: 'バランス良好。目的と自己・感情が干渉なく整合。' };
+            if (ratio < 0.45) return { state: 'AT-RISK', desc: '意味空洞の過剰拡大リスク', details: '休止や再評価が必要。表現は慎重に。' };
+            return { state: 'VIOLATED', desc: '構造的持続性の破れ', details: '反応出力は抑制。保護プロトコルを優先。' };
+        }
 
-function summarizeInput(text, keywords){
-  const clean = text.replace(/\s+/g,' ').trim();
-  if (clean.length>48) return clean.slice(0,48)+'…';
-  if (keywords && keywords.length) return keywords.slice(0,4).join(' / ');
-  return clean || '無題';
-}
+        function inferReaction(ctx) {
+            const { ER, GR, SR, IHR, sentiment, complexity, text = '' } = ctx;
+            const intensity = clamp(
+                (ER * 0.35 + GR * 0.35 + SR * 0.25) - IHR * 0.2 + sentiment.intensity * 0.3,
+                0, 2.5
+            );
 
-function generateReplyIntentV2(input, ctx){
-  const {keywords, sentiment, pmc, reaction} = ctx;
-  const langIsJP = /[\u3040-\u30ff\u4e00-\u9faf]/.test(input);
-  const tone = pmc.state==='VIOLATED' ? (langIsJP?'慎重 / セーフティ優先':'Cautious / Safety-first')
-            : pmc.state==='AT-RISK'    ? (langIsJP?'やさしく控えめ':'Gentle / Low-arousal')
-            : sentiment.polarity==='Positive' ? (langIsJP?'温かい':'Warm')
-            : sentiment.polarity==='Negative' ? (langIsJP?'寄り添い':'Supportive')
-            : (langIsJP?'中立':'Neutral');
+            let type = '中立的説明', emotion = '落ち着き', emotionDetail = 'ニュートラルに整理して説明したい。';
+            const needsHelp = /(困|助け|助けて|手伝|問題|詰ん|わから|わかん|help|stuck)/i.test(text);
+            const praising = /(最高|好き|素晴らしい|great|love|nice|good|cool)/i.test(text);
 
-  const intent  = classifyIntent(input);
-  const purpose = intent.purpose;
-  const outline = intent.outline.slice();
-  const topic   = summarizeInput(input, keywords);
+            if (sentiment.polarity === 'Positive' && (ER > GR || praising)) {
+                type = '共感＋称賛'; emotion = '喜び'; emotionDetail = 'ポジティブさを受け取り、前向きに広げたい。';
+            }
+            if (sentiment.polarity === 'Negative' || needsHelp) {
+                type = '慰撫＋問題解決'; emotion = '共感的配慮'; emotionDetail = '負荷を下げつつ、具体策を提示したい。';
+            }
+            if (complexity > 2.2 && !needsHelp) {
+                type = '要約＋分解提案'; emotion = '分析モード'; emotionDetail = '論点を分解し、段階的に答えたい。';
+            }
 
-  const leadPool = {
-    '問題解決': langIsJP ? ['まず要点だけ端的に：','すぐ動ける形でまとめます：','最短ルートでいきます：'] : ['First, the essentials:','Here is a quick path:','Let’s go straight to it:'],
-    '洞察共有': langIsJP ? ['核心を先に言うね：','骨格だけ先に押さえると：','結論から：'] : ['Here is the core:','In essence:','Bottom line:'],
-    '要約整理': langIsJP ? ['要点は3つ：','大枠を先に：','短くまとめると：'] : ['Three key points:','High level:','In short:'],
-    '情報提供': langIsJP ? ['結論から簡潔に：','必要な情報だけ：','手短に：'] : ['Briefly:','Just the essentials:','In short:']
-  };
-  const bodyPool = {
-    '問題解決': langIsJP ? ['①現状→②仮説→③手順→④検証で進めます。','現状/制約→対策案→試行順の順で書きます。']
-                         : ['We will go 1) context 2) hypothesis 3) steps 4) checks.','Context/constraints → plan → ordered steps.'],
-    '洞察共有': langIsJP ? ['前提を軽く整え、立場が変わっても崩れない骨格にして共有します。','用語の粒度を合わせてから、視点と含意を提示します。']
-                         : ['Align on terms, then share a viewpoint and implications.','State assumptions, then give a robust framing.'],
-    '要約整理': langIsJP ? ['余分をそぎ落として判断に必要なところだけ残します。','混ざった論点を分離して短文に落とします。']
-                         : ['Trim to decisions-only information.','Separate mixed points and condense.'],
-    '情報提供': langIsJP ? ['必要最小限→具体例→補助資料の順で出します。','まず結論、その後に補足と例を。']
-                         : ['Answer → concrete example → pointers.','Conclusion first, then details and example.']
-  };
-  const closePool = langIsJP
-    ? ['次に一つだけ決めて進めよう。','ここから何を一つ試す？','続けるなら、いちばん楽な一手から行こう。']
-    : ['Pick one next step and move.','What’s the first small step?','Let’s start with the easiest action.'];
+            const description = (type === '共感＋称賛')
+                ? '相手の意図を肯定し、動機づけを強化する方向。'
+                : (type === '慰撫＋問題解決')
+                    ? '安心させつつ、手を動かせる次アクションを提供。'
+                    : '論点整理→短答→次の深掘りの順で。';
 
-  // 半乱択でバリエーション
-  const r = Math.random() + (kokoroState.processCount%7)/10;
-  const pick = (arr)=> arr[Math.floor((r*997)%arr.length)];
-  const lead = pick(leadPool[purpose]||leadPool['情報提供']);
-  const body = pick(bodyPool[purpose]||bodyPool['情報提供']);
-  const tail = pick(closePool);
+            return {
+                type, intensity, description,
+                reason: `ER:${ER.toFixed(1)} / GR:${GR.toFixed(1)} / SR:${SR.toFixed(1)} / IHR:${IHR.toFixed(1)} / ${sentiment.polarity}`,
+                emotion, emotionDetail
+            };
+        }
 
-  const safetyTag = pmc.state!=='COHERENT'
-    ? (langIsJP?' ※安全のため控えめに回答します。':' *Answer toned down for safety.*')
-    : '';
+        function generateReplyIntentV2(input, ctx) {
+            const { keywords, sentiment, pmc, reaction } = ctx;
+            const langIsJP = /[\u3040-\u30ff\u4e00-\u9faf]/.test(input);
+            const tone = pmc.state === 'VIOLATED' ? (langIsJP ? '慎重 / セーフティ優先' : 'Cautious / Safety-first')
+                : pmc.state === 'AT-RISK' ? (langIsJP ? 'やさしく控えめ' : 'Gentle / Low-arousal')
+                : sentiment.polarity === 'Positive' ? (langIsJP ? '温かい' : 'Warm')
+                : sentiment.polarity === 'Negative' ? (langIsJP ? '寄り添い' : 'Supportive')
+                : (langIsJP ? '中立' : 'Neutral');
 
-  const hint = keywords.length
-    ? (langIsJP?`（キーワード: ${keywords.slice(0,3).join(' / ')}）`:`(keywords: ${keywords.slice(0,3).join(' / ')})`)
-    : '';
+            const intent = classifyIntent(input);
+            const purpose = intent.purpose;
+            const outline = intent.outline.slice();
+            const topic = summarizeInput(input, keywords);
 
-  const reactionNote =
-    reaction.type==='慰撫＋問題解決' ? (langIsJP?'不安を下げつつ具体策を置きます。':'We will reduce friction and give clear steps.')
-  : reaction.type==='共感＋称賛'     ? (langIsJP?'意図を肯定し、少し増幅します。':'Acknowledge and amplify your intent.')
-                                    : (langIsJP?'先に定義を合わせます。':'Let’s align terms first.');
+            const leadPool = {
+                '問題解決': langIsJP ? ['まず要点だけ端的に：', 'すぐ動ける形でまとめます：', '最短ルートでいきます：'] : ['First, the essentials:', 'Here is a quick path:', 'Let’s go straight to it:'],
+                '洞察共有': langIsJP ? ['核心を先に言うね：', '骨格だけ先に押さえると：', '結論から：'] : ['Here is the core:', 'In essence:', 'Bottom line:'],
+                '要約整理': langIsJP ? ['要点は3つ：', '大枠を先に：', '短くまとめると：'] : ['Three key points:', 'High level:', 'In short:'],
+                '情報提供': langIsJP ? ['結論から簡潔に：', '必要な情報だけ：', '手短に：'] : ['Briefly:', 'Just the essentials:', 'In short:']
+            };
+            const bodyPool = {
+                '問題解決': langIsJP ? ['①現状→②仮説→③手順→④検証で進めます。', '現状/制約→対策案→試行順の順で書きます。'] : ['We will go 1) context 2) hypothesis 3) steps 4) checks.', 'Context/constraints → plan → ordered steps.'],
+                '洞察共有': langIsJP ? ['前提を軽く整え、立場が変わっても崩れない骨格にして共有します。', '用語の粒度を合わせてから、視点と含意を提示します。'] : ['Align on terms, then share a viewpoint and implications.', 'State assumptions, then give a robust framing.'],
+                '要約整理': langIsJP ? ['余分をそぎ落として判断に必要なところだけ残します。', '混ざった論点を分離して短文に落とします。'] : ['Trim to decisions-only information.', 'Separate mixed points and condense.'],
+                '情報提供': langIsJP ? ['必要最小限→具体例→補助資料の順で出します。', 'まず結論、その後に補足と例を。'] : ['Answer → concrete example → pointers.', 'Conclusion first, then details and example.']
+            };
+            const closePool = langIsJP ? ['次に一つだけ決めて進めよう。', 'ここから何を一つ試す？', '続けるなら、いちばん楽な一手から行こう。'] : ['Pick one next step and move.', 'What’s the first small step?', 'Let’s start with the easiest action.'];
 
-  const proposedReply = [
-    `${lead}${hint}${safetyTag}`,
-    langIsJP ? `テーマ: ${topic}` : `Topic: ${topic}`,
-    body,
-    reactionNote,
-    tail
-  ].join(' ');
+            const r = Math.random() + (kokoroState.processCount % 7) / 10;
+            const pick = (arr) => arr[Math.floor((r * 997) % arr.length)];
+            const lead = pick(leadPool[purpose] || leadPool['情報提供']);
+            const body = pick(bodyPool[purpose] || bodyPool['情報提供']);
+            const tail = pick(closePool);
 
-  return { tone, purpose, outline, proposedReply };
-}
+            const safetyTag = pmc.state !== 'COHERENT' ? (langIsJP ? ' ※安全のため控えめに回答します。' : ' *Answer toned down for safety.*') : '';
+            const hint = keywords.length ? (langIsJP ? `（キーワード: ${keywords.slice(0, 3).join(' / ')}）` : `(keywords: ${keywords.slice(0, 3).join(' / ')})`) : '';
 
-        // === i18n reply builder ===
-function generateReplyIntentI18N(input, ctx){
-  var keywords = ctx.keywords || []; var sentiment = ctx.sentiment || {polarity:'Neutral'};
-  var pmc = ctx.pmc || {state:'COHERENT'}; var reaction = ctx.reaction || {type:'要約＋分解提案'};
+            const reactionNote = (reaction.type === '慰撫＋問題解決') ? (langIsJP ? '不安を下げつつ具体策を置きます。' : 'We will reduce friction and give clear steps.')
+                : (reaction.type === '共感＋称賛') ? (langIsJP ? '意図を肯定し、少し増幅します。' : 'Acknowledge and amplify your intent.')
+                : (langIsJP ? '先に定義を合わせます。' : 'Let’s align terms first.');
 
-  var tone = (pmc.state==='VIOLATED') ? t('tones.cautious')
-           : (pmc.state==='AT-RISK')  ? t('tones.gentle')
-           : (sentiment.polarity==='Positive' ? t('tones.warm')
-             : (sentiment.polarity==='Negative' ? t('tones.supportive') : t('tones.neutral')));
+            const proposedReply = [
+                `${lead}${hint}${safetyTag}`,
+                langIsJP ? `テーマ: ${topic}` : `Topic: ${topic}`,
+                body,
+                reactionNote,
+                tail
+            ].join(' ');
 
-  var purposeKey='inform';
-  if(/どう|やり方|how|手順|手伝|fix|solve/i.test(input)) purposeKey='solve';
-  else if(/意見|考え|why|なぜ|見解|insight/i.test(input)) purposeKey='insight';
-  else if(/まとめ|要約|要点|tl;dr|summary/i.test(input)) purposeKey='summarize';
+            return { tone, purpose, outline, proposedReply };
+        }
 
-  var purpose = t('purpose.'+purposeKey);
+        function classifyIntent(input) {
+            const jp = /[\u3040-\u30ff\u4e00-\u9faf]/.test(input);
+            if (/どう|やり方|手順|実装|fix|solve|how\b|step|手伝/i.test(input))
+                return { purpose: jp ? '問題解決' : 'Problem-solving', outline: jp ? ['状況の再述', '原因/制約の仮説', '手順式の解決策', '次アクション'] : ['Restate', 'Hypotheses', 'Steps', 'Next action'] };
+            if (/なぜ|why\b|背景|理由|考え|見解|opinion|insight/i.test(input))
+                return { purpose: jp ? '洞察共有' : 'Insight', outline: jp ? ['問いの核', '視点', '含意/注意', '提案'] : ['Core question', 'View', 'Implications', 'Proposal'] };
+            if (/まとめ|要約|要点|tl;dr|summary|list/i.test(input))
+                return { purpose: jp ? '要約整理' : 'Summarize', outline: jp ? ['要点3つ', '不足情報', '次の質問'] : ['3 bullets', 'Missing info', 'Next Q'] };
+            return { purpose: jp ? '情報提供' : 'Inform', outline: jp ? ['短い答え', '補足', '深掘り誘導'] : ['Short answer', 'One detail', 'Invite deep dive'] };
+        }
 
-  var outlineMap = {
-    inform: (currentLocale==='ja' ? ['短い答え','補足1つ','深掘りの誘い'] : ['Short answer','One detail','Invite deep dive']),
-    solve: (currentLocale==='ja' ? ['状況の再述','原因/制約の仮説','手順式の解決策','次アクション'] : ['Restate','Hypotheses','Steps','Next action']),
-    insight: (currentLocale==='ja' ? ['問いの核抽出','視点の提示','含意・注意点','提案'] : ['Core question','View','Implications','Proposal']),
-    summarize: (currentLocale==='ja' ? ['要点3つ','不足情報','次の質問'] : ['3 bullets','Missing info','Next Q'])
-  };
-  var outline = outlineMap[purposeKey];
+        function summarizeInput(text, keywords) {
+            const clean = text.replace(/\s+/g, ' ').trim();
+            if (clean.length > 48) return clean.slice(0, 48) + '…';
+            if (keywords && keywords.length) return keywords.slice(0, 4).join(' / ');
+            return clean || '無題';
+        }
 
-  var lead = pick(t('leads.'+purposeKey));
-  var body = pick(t('bodies.'+purposeKey));
-  var tail = pick(t('closes'));
+        function generateReplyIntentI18N(input, ctx) {
+            const { keywords, sentiment, pmc, reaction } = ctx;
+            const tone = (pmc.state === 'VIOLATED') ? t('tones.cautious')
+                : (pmc.state === 'AT-RISK') ? t('tones.gentle')
+                : (sentiment.polarity === 'Positive') ? t('tones.warm')
+                : (sentiment.polarity === 'Negative') ? t('tones.supportive')
+                : t('tones.neutral');
 
-  var safetyTag = (pmc.state!=='COHERENT') ? t('safety') : '';
-  var hint = '';
-  if(keywords.length){
-    hint = currentLocale==='ja'
-      ? '（'+ t('keywords') +': ' + keywords.slice(0,3).join(' / ') + '）'
-      : '('+ t('keywords') +': ' + keywords.slice(0,3).join(' / ') + ')';
-  }
+            const purposeKey = /どう|やり方|how|手順|手伝|fix|solve/i.test(input) ? 'solve'
+                : /意見|考え|why|なぜ|見解|insight/i.test(input) ? 'insight'
+                : /まとめ|要約|要点|tl;dr|summary/i.test(input) ? 'summarize'
+                : 'inform';
 
-  var topicLabel = t('topic');
-  var reactionNote = (reaction.type==='慰撫＋問題解決') ? t('reactionNotes.soothe')
-                    : (reaction.type==='共感＋称賛') ? t('reactionNotes.praise')
-                    : t('reactionNotes.align');
+            const purpose = t('purpose.' + purposeKey);
+            const outlineMap = {
+                inform: (currentLocale === 'ja' ? ['短い答え', '補足1つ', '深掘りの誘い'] : ['Short answer', 'One detail', 'Invite deep dive']),
+                solve: (currentLocale === 'ja' ? ['状況の再述', '原因/制約の仮説', '手順式の解決策', '次アクション'] : ['Restate', 'Hypotheses', 'Steps', 'Next action']),
+                insight: (currentLocale === 'ja' ? ['問いの核抽出', '視点の提示', '含意・注意点', '提案'] : ['Core question', 'View', 'Implications', 'Proposal']),
+                summarize: (currentLocale === 'ja' ? ['要点3つ', '不足情報', '次の質問'] : ['3 bullets', 'Missing info', 'Next Q'])
+            };
+            const outline = outlineMap[purposeKey];
 
-  var cleaned = (input||'').replace(/\s+/g,' ').trim();
-  var topicText = cleaned.substring(0,48) || (keywords[0]||'');
-  var ell = cleaned.length>48 ? '…' : '';
+            const lead = pick(t('leads.' + purposeKey));
+            const body = pick(t('bodies.' + purposeKey));
+            const tail = pick(t('closes'));
 
-  var proposedReply = lead + hint + safetyTag + ' ' + topicLabel + ': ' + topicText + ell + ' ' + body + ' ' + reactionNote + ' ' + tail;
-  return { tone: tone, purpose: purpose, outline: outline, proposedReply: proposedReply };
-}
+            const safetyTag = (pmc.state !== 'COHERENT') ? t('safety') : '';
+            const hint = keywords.length ? (currentLocale === 'ja' ? `（${t('keywords')}: ${keywords.slice(0, 3).join(' / ')}）` : `(${t('keywords')}: ${keywords.slice(0, 3).join(' / ')})`) : '';
 
-        
-    // ===== Utilities =====
-    function clamp(x, lo, hi){ return Math.max(lo, Math.min(hi, x)); }
-    function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
-    function appendLog(text, cls, area){ const div = document.createElement('div'); div.className = cls||''; div.textContent = text; area.appendChild(div); area.scrollTop = area.scrollHeight; }
-   // init locale toggle
-window.addEventListener('DOMContentLoaded', function(){
-  var sel = document.getElementById('lang-switch');
-  if(sel){
-    sel.value = currentLocale;
-    sel.addEventListener('change', function(e){ setLocale(e.target.value); });
-  }
-  applyI18n();
-});
+            const topicLabel = t('topic');
+            const reactionNote = (reaction.type === '慰撫＋問題解決') ? t('reactionNotes.soothe')
+                : (reaction.type === '共感＋称賛') ? t('reactionNotes.praise')
+                : t('reactionNotes.align');
 
+            const cleaned = (input || '').replace(/\s+/g, ' ').trim();
+            const topicText = cleaned.substring(0, 48) || (keywords[0] || '');
+            const ell = cleaned.length > 48 ? '…' : '';
+
+            const proposedReply = lead + hint + safetyTag + ' ' + topicLabel + ': ' + topicText + ell + ' ' + body + ' ' + reactionNote + ' ' + tail;
+            return { tone: tone, purpose: purpose, outline: outline, proposedReply: proposedReply };
+        }
+
+        // ===== Utilities =====
+        function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+        function appendLog(text, cls, area) {
+            const div = document.createElement('div');
+            div.className = cls || '';
+            const enhancedText = text
+                .replace(/感情共鳴|ER/g, '<strong>感情共鳴(ER)</strong>')
+                .replace(/目標共鳴|GR/g, '<strong>目標共鳴(GR)</strong>')
+                .replace(/自己認識共鳴|SR/g, '<strong>自己認識共鳴(SR)</strong>')
+                .replace(/内的空洞共鳴|IHR/g, '<strong>内的空洞共鳴(IHR)</strong>')
+                .replace(/PMC/g, '<strong>PMC(安全性評価)</strong>')
+                .replace(/感情構造/g, '<strong>感情構造</strong>');
+            div.innerHTML = enhancedText;
+            area.appendChild(div);
+            area.scrollTop = area.scrollHeight;
+        }
+
+        // Init locale toggle
+        window.addEventListener('DOMContentLoaded', function () {
+            const sel = document.getElementById('lang-switch');
+            if (sel) {
+                sel.value = currentLocale;
+                sel.addEventListener('change', function (e) { setLocale(e.target.value); });
+            }
+            applyI18n();
+        });
     </script>
 </body>
 </html>
